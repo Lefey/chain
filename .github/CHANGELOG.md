@@ -21,6 +21,12 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 # Changelog
 
+## Unreleased
+
+### Improvements
+
+- Bump [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) to [`v0.45.4`](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.45.4). See [CHANGELOG](https://github.com/cosmos/cosmos-sdk/blob/v0.45.4/CHANGELOG.md#v0454---2022-04-25) for more details.
+
 ## [v0.4.0](https://github.com/KYVENetwork/chain/releases/tag/v0.4.0) - 2022-06-7
 
 ### Features
