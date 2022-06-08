@@ -1086,34 +1086,34 @@ func (m *Staker) GetPoints() uint64 {
 	return 0
 }
 
-// UnbondingEntries ...
-type UnbondingEntries struct {
-	// index ...
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+type UnbondingStakingQueueEntry struct {
+	// index is a monotonically increasing integer to order the entries
 	Index uint64 `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
-	// pool_id ...
-	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
 	// staker ...
-	Staker string `protobuf:"bytes,3,opt,name=staker,proto3" json:"staker,omitempty"`
-	// delegator ...
-	Delegator string `protobuf:"bytes,4,opt,name=delegator,proto3" json:"delegator,omitempty"`
+	Staker string `protobuf:"bytes,2,opt,name=staker,proto3" json:"staker,omitempty"`
+	// pool_id ...
+	PoolId uint64 `protobuf:"varint,3,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	// amount ...
+	Amount uint64 `protobuf:"varint,4,opt,name=amount,proto3" json:"amount,omitempty"`
 	// creation_time ...
 	CreationTime uint64 `protobuf:"varint,5,opt,name=creation_time,json=creationTime,proto3" json:"creation_time,omitempty"`
-	// amount ...
-	Amount uint64 `protobuf:"varint,6,opt,name=amount,proto3" json:"amount,omitempty"`
 }
 
-func (m *UnbondingEntries) Reset()         { *m = UnbondingEntries{} }
-func (m *UnbondingEntries) String() string { return proto.CompactTextString(m) }
-func (*UnbondingEntries) ProtoMessage()    {}
-func (*UnbondingEntries) Descriptor() ([]byte, []int) {
+func (m *UnbondingStakingQueueEntry) Reset()         { *m = UnbondingStakingQueueEntry{} }
+func (m *UnbondingStakingQueueEntry) String() string { return proto.CompactTextString(m) }
+func (*UnbondingStakingQueueEntry) ProtoMessage()    {}
+func (*UnbondingStakingQueueEntry) Descriptor() ([]byte, []int) {
 	return fileDescriptor_db13ea1584a90e6e, []int{10}
 }
-func (m *UnbondingEntries) XXX_Unmarshal(b []byte) error {
+func (m *UnbondingStakingQueueEntry) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UnbondingEntries) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UnbondingStakingQueueEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UnbondingEntries.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UnbondingStakingQueueEntry.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1123,80 +1123,77 @@ func (m *UnbondingEntries) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return b[:n], nil
 	}
 }
-func (m *UnbondingEntries) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnbondingEntries.Merge(m, src)
+func (m *UnbondingStakingQueueEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingStakingQueueEntry.Merge(m, src)
 }
-func (m *UnbondingEntries) XXX_Size() int {
+func (m *UnbondingStakingQueueEntry) XXX_Size() int {
 	return m.Size()
 }
-func (m *UnbondingEntries) XXX_DiscardUnknown() {
-	xxx_messageInfo_UnbondingEntries.DiscardUnknown(m)
+func (m *UnbondingStakingQueueEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingStakingQueueEntry.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UnbondingEntries proto.InternalMessageInfo
+var xxx_messageInfo_UnbondingStakingQueueEntry proto.InternalMessageInfo
 
-func (m *UnbondingEntries) GetIndex() uint64 {
+func (m *UnbondingStakingQueueEntry) GetIndex() uint64 {
 	if m != nil {
 		return m.Index
 	}
 	return 0
 }
 
-func (m *UnbondingEntries) GetPoolId() uint64 {
-	if m != nil {
-		return m.PoolId
-	}
-	return 0
-}
-
-func (m *UnbondingEntries) GetStaker() string {
+func (m *UnbondingStakingQueueEntry) GetStaker() string {
 	if m != nil {
 		return m.Staker
 	}
 	return ""
 }
 
-func (m *UnbondingEntries) GetDelegator() string {
+func (m *UnbondingStakingQueueEntry) GetPoolId() uint64 {
 	if m != nil {
-		return m.Delegator
-	}
-	return ""
-}
-
-func (m *UnbondingEntries) GetCreationTime() uint64 {
-	if m != nil {
-		return m.CreationTime
+		return m.PoolId
 	}
 	return 0
 }
 
-func (m *UnbondingEntries) GetAmount() uint64 {
+func (m *UnbondingStakingQueueEntry) GetAmount() uint64 {
 	if m != nil {
 		return m.Amount
 	}
 	return 0
 }
 
-// UnbondingState stores the state for the unbonding of stakes and delegations.
-type UnbondingState struct {
-	// low_index ...
-	LowIndex uint64 `protobuf:"varint,1,opt,name=low_index,json=lowIndex,proto3" json:"low_index,omitempty"`
-	// high_index ...
-	HighIndex uint64 `protobuf:"varint,2,opt,name=high_index,json=highIndex,proto3" json:"high_index,omitempty"`
+func (m *UnbondingStakingQueueEntry) GetCreationTime() uint64 {
+	if m != nil {
+		return m.CreationTime
+	}
+	return 0
 }
 
-func (m *UnbondingState) Reset()         { *m = UnbondingState{} }
-func (m *UnbondingState) String() string { return proto.CompactTextString(m) }
-func (*UnbondingState) ProtoMessage()    {}
-func (*UnbondingState) Descriptor() ([]byte, []int) {
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+type UnbondingStaker struct {
+	// staker ...
+	Staker string `protobuf:"bytes,1,opt,name=staker,proto3" json:"staker,omitempty"`
+	// pool_id ...
+	PoolId uint64 `protobuf:"varint,2,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	// amount ...
+	UnbondingAmount uint64 `protobuf:"varint,3,opt,name=unbonding_amount,json=unbondingAmount,proto3" json:"unbonding_amount,omitempty"`
+}
+
+func (m *UnbondingStaker) Reset()         { *m = UnbondingStaker{} }
+func (m *UnbondingStaker) String() string { return proto.CompactTextString(m) }
+func (*UnbondingStaker) ProtoMessage()    {}
+func (*UnbondingStaker) Descriptor() ([]byte, []int) {
 	return fileDescriptor_db13ea1584a90e6e, []int{11}
 }
-func (m *UnbondingState) XXX_Unmarshal(b []byte) error {
+func (m *UnbondingStaker) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *UnbondingState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *UnbondingStaker) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	if deterministic {
-		return xxx_messageInfo_UnbondingState.Marshal(b, m, deterministic)
+		return xxx_messageInfo_UnbondingStaker.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
 		n, err := m.MarshalToSizedBuffer(b)
@@ -1206,26 +1203,311 @@ func (m *UnbondingState) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return b[:n], nil
 	}
 }
-func (m *UnbondingState) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_UnbondingState.Merge(m, src)
+func (m *UnbondingStaker) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingStaker.Merge(m, src)
 }
-func (m *UnbondingState) XXX_Size() int {
+func (m *UnbondingStaker) XXX_Size() int {
 	return m.Size()
 }
-func (m *UnbondingState) XXX_DiscardUnknown() {
-	xxx_messageInfo_UnbondingState.DiscardUnknown(m)
+func (m *UnbondingStaker) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingStaker.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_UnbondingState proto.InternalMessageInfo
+var xxx_messageInfo_UnbondingStaker proto.InternalMessageInfo
 
-func (m *UnbondingState) GetLowIndex() uint64 {
+func (m *UnbondingStaker) GetStaker() string {
+	if m != nil {
+		return m.Staker
+	}
+	return ""
+}
+
+func (m *UnbondingStaker) GetPoolId() uint64 {
+	if m != nil {
+		return m.PoolId
+	}
+	return 0
+}
+
+func (m *UnbondingStaker) GetUnbondingAmount() uint64 {
+	if m != nil {
+		return m.UnbondingAmount
+	}
+	return 0
+}
+
+// UnbondingState stores the state for the unbonding of stakes and delegations.
+type UnbondingStakingQueueState struct {
+	// low_index ...
+	LowIndex uint64 `protobuf:"varint,1,opt,name=low_index,json=lowIndex,proto3" json:"low_index,omitempty"`
+	// high_index ...
+	HighIndex uint64 `protobuf:"varint,2,opt,name=high_index,json=highIndex,proto3" json:"high_index,omitempty"`
+}
+
+func (m *UnbondingStakingQueueState) Reset()         { *m = UnbondingStakingQueueState{} }
+func (m *UnbondingStakingQueueState) String() string { return proto.CompactTextString(m) }
+func (*UnbondingStakingQueueState) ProtoMessage()    {}
+func (*UnbondingStakingQueueState) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db13ea1584a90e6e, []int{12}
+}
+func (m *UnbondingStakingQueueState) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnbondingStakingQueueState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnbondingStakingQueueState.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UnbondingStakingQueueState) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingStakingQueueState.Merge(m, src)
+}
+func (m *UnbondingStakingQueueState) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnbondingStakingQueueState) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingStakingQueueState.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnbondingStakingQueueState proto.InternalMessageInfo
+
+func (m *UnbondingStakingQueueState) GetLowIndex() uint64 {
 	if m != nil {
 		return m.LowIndex
 	}
 	return 0
 }
 
-func (m *UnbondingState) GetHighIndex() uint64 {
+func (m *UnbondingStakingQueueState) GetHighIndex() uint64 {
+	if m != nil {
+		return m.HighIndex
+	}
+	return 0
+}
+
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+type UnbondingDelegationQueueEntry struct {
+	// index is a monotonically increasing integer to order the entries
+	Index uint64 `protobuf:"varint,1,opt,name=index,proto3" json:"index,omitempty"`
+	// staker ...
+	Staker string `protobuf:"bytes,2,opt,name=staker,proto3" json:"staker,omitempty"`
+	// delegator ...
+	Delegator string `protobuf:"bytes,3,opt,name=delegator,proto3" json:"delegator,omitempty"`
+	// pool_id ...
+	PoolId uint64 `protobuf:"varint,4,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	// amount ...
+	Amount uint64 `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	// creation_time ...
+	CreationTime uint64 `protobuf:"varint,6,opt,name=creation_time,json=creationTime,proto3" json:"creation_time,omitempty"`
+}
+
+func (m *UnbondingDelegationQueueEntry) Reset()         { *m = UnbondingDelegationQueueEntry{} }
+func (m *UnbondingDelegationQueueEntry) String() string { return proto.CompactTextString(m) }
+func (*UnbondingDelegationQueueEntry) ProtoMessage()    {}
+func (*UnbondingDelegationQueueEntry) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db13ea1584a90e6e, []int{13}
+}
+func (m *UnbondingDelegationQueueEntry) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnbondingDelegationQueueEntry) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnbondingDelegationQueueEntry.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UnbondingDelegationQueueEntry) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingDelegationQueueEntry.Merge(m, src)
+}
+func (m *UnbondingDelegationQueueEntry) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnbondingDelegationQueueEntry) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingDelegationQueueEntry.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnbondingDelegationQueueEntry proto.InternalMessageInfo
+
+func (m *UnbondingDelegationQueueEntry) GetIndex() uint64 {
+	if m != nil {
+		return m.Index
+	}
+	return 0
+}
+
+func (m *UnbondingDelegationQueueEntry) GetStaker() string {
+	if m != nil {
+		return m.Staker
+	}
+	return ""
+}
+
+func (m *UnbondingDelegationQueueEntry) GetDelegator() string {
+	if m != nil {
+		return m.Delegator
+	}
+	return ""
+}
+
+func (m *UnbondingDelegationQueueEntry) GetPoolId() uint64 {
+	if m != nil {
+		return m.PoolId
+	}
+	return 0
+}
+
+func (m *UnbondingDelegationQueueEntry) GetAmount() uint64 {
+	if m != nil {
+		return m.Amount
+	}
+	return 0
+}
+
+func (m *UnbondingDelegationQueueEntry) GetCreationTime() uint64 {
+	if m != nil {
+		return m.CreationTime
+	}
+	return 0
+}
+
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+type UnbondingDelegator struct {
+	// staker ...
+	Delegator string `protobuf:"bytes,1,opt,name=delegator,proto3" json:"delegator,omitempty"`
+	// staker ...
+	Staker string `protobuf:"bytes,2,opt,name=staker,proto3" json:"staker,omitempty"`
+	// pool_id ...
+	PoolId uint64 `protobuf:"varint,3,opt,name=pool_id,json=poolId,proto3" json:"pool_id,omitempty"`
+	// amount ...
+	UnbondingAmount uint64 `protobuf:"varint,4,opt,name=unbonding_amount,json=unbondingAmount,proto3" json:"unbonding_amount,omitempty"`
+}
+
+func (m *UnbondingDelegator) Reset()         { *m = UnbondingDelegator{} }
+func (m *UnbondingDelegator) String() string { return proto.CompactTextString(m) }
+func (*UnbondingDelegator) ProtoMessage()    {}
+func (*UnbondingDelegator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db13ea1584a90e6e, []int{14}
+}
+func (m *UnbondingDelegator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnbondingDelegator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnbondingDelegator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UnbondingDelegator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingDelegator.Merge(m, src)
+}
+func (m *UnbondingDelegator) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnbondingDelegator) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingDelegator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnbondingDelegator proto.InternalMessageInfo
+
+func (m *UnbondingDelegator) GetDelegator() string {
+	if m != nil {
+		return m.Delegator
+	}
+	return ""
+}
+
+func (m *UnbondingDelegator) GetStaker() string {
+	if m != nil {
+		return m.Staker
+	}
+	return ""
+}
+
+func (m *UnbondingDelegator) GetPoolId() uint64 {
+	if m != nil {
+		return m.PoolId
+	}
+	return 0
+}
+
+func (m *UnbondingDelegator) GetUnbondingAmount() uint64 {
+	if m != nil {
+		return m.UnbondingAmount
+	}
+	return 0
+}
+
+// UnbondingState stores the state for the unbonding of stakes and delegations.
+type UnbondingDelegationQueueState struct {
+	// low_index ...
+	LowIndex uint64 `protobuf:"varint,1,opt,name=low_index,json=lowIndex,proto3" json:"low_index,omitempty"`
+	// high_index ...
+	HighIndex uint64 `protobuf:"varint,2,opt,name=high_index,json=highIndex,proto3" json:"high_index,omitempty"`
+}
+
+func (m *UnbondingDelegationQueueState) Reset()         { *m = UnbondingDelegationQueueState{} }
+func (m *UnbondingDelegationQueueState) String() string { return proto.CompactTextString(m) }
+func (*UnbondingDelegationQueueState) ProtoMessage()    {}
+func (*UnbondingDelegationQueueState) Descriptor() ([]byte, []int) {
+	return fileDescriptor_db13ea1584a90e6e, []int{15}
+}
+func (m *UnbondingDelegationQueueState) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *UnbondingDelegationQueueState) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_UnbondingDelegationQueueState.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *UnbondingDelegationQueueState) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_UnbondingDelegationQueueState.Merge(m, src)
+}
+func (m *UnbondingDelegationQueueState) XXX_Size() int {
+	return m.Size()
+}
+func (m *UnbondingDelegationQueueState) XXX_DiscardUnknown() {
+	xxx_messageInfo_UnbondingDelegationQueueState.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_UnbondingDelegationQueueState proto.InternalMessageInfo
+
+func (m *UnbondingDelegationQueueState) GetLowIndex() uint64 {
+	if m != nil {
+		return m.LowIndex
+	}
+	return 0
+}
+
+func (m *UnbondingDelegationQueueState) GetHighIndex() uint64 {
 	if m != nil {
 		return m.HighIndex
 	}
@@ -1243,8 +1525,12 @@ func init() {
 	proto.RegisterType((*Pool)(nil), "kyve.registry.v1beta1.Pool")
 	proto.RegisterType((*Proposal)(nil), "kyve.registry.v1beta1.Proposal")
 	proto.RegisterType((*Staker)(nil), "kyve.registry.v1beta1.Staker")
-	proto.RegisterType((*UnbondingEntries)(nil), "kyve.registry.v1beta1.UnbondingEntries")
-	proto.RegisterType((*UnbondingState)(nil), "kyve.registry.v1beta1.UnbondingState")
+	proto.RegisterType((*UnbondingStakingQueueEntry)(nil), "kyve.registry.v1beta1.UnbondingStakingQueueEntry")
+	proto.RegisterType((*UnbondingStaker)(nil), "kyve.registry.v1beta1.UnbondingStaker")
+	proto.RegisterType((*UnbondingStakingQueueState)(nil), "kyve.registry.v1beta1.UnbondingStakingQueueState")
+	proto.RegisterType((*UnbondingDelegationQueueEntry)(nil), "kyve.registry.v1beta1.UnbondingDelegationQueueEntry")
+	proto.RegisterType((*UnbondingDelegator)(nil), "kyve.registry.v1beta1.UnbondingDelegator")
+	proto.RegisterType((*UnbondingDelegationQueueState)(nil), "kyve.registry.v1beta1.UnbondingDelegationQueueState")
 }
 
 func init() {
@@ -1252,88 +1538,93 @@ func init() {
 }
 
 var fileDescriptor_db13ea1584a90e6e = []byte{
-	// 1283 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x4f, 0x93, 0xdb, 0xc4,
-	0x13, 0x8d, 0x1c, 0xc7, 0x6b, 0xb5, 0xbd, 0xf6, 0x46, 0xbf, 0xfc, 0xd1, 0x2f, 0x10, 0x67, 0xa3,
-	0x24, 0x64, 0x29, 0x8a, 0x5d, 0x02, 0x47, 0x4e, 0xce, 0x1f, 0x60, 0x2b, 0x54, 0x6a, 0x4b, 0xcb,
-	0x86, 0x82, 0x8b, 0x6a, 0x2c, 0xcd, 0xda, 0x53, 0x96, 0x67, 0x5c, 0x33, 0x23, 0x7b, 0x37, 0x47,
-	0x3e, 0x01, 0x37, 0xee, 0x7c, 0x06, 0xae, 0x9c, 0xb8, 0x70, 0xcc, 0x11, 0x6e, 0x54, 0xf2, 0x3d,
-	0x28, 0xaa, 0x67, 0x46, 0xb2, 0xbc, 0xd9, 0xa4, 0x28, 0x6e, 0xea, 0x37, 0xad, 0x9e, 0x9e, 0xd6,
-	0xd3, 0x7b, 0x03, 0x77, 0xa7, 0xa7, 0x0b, 0xba, 0x27, 0xe9, 0x98, 0x29, 0x2d, 0x4f, 0xf7, 0x16,
-	0x0f, 0x46, 0x54, 0x93, 0x07, 0x15, 0xb0, 0x3b, 0x97, 0x42, 0x8b, 0xe0, 0x2a, 0x66, 0xed, 0x56,
-	0xa0, 0xcb, 0x8a, 0xfe, 0x6c, 0x40, 0xef, 0x61, 0xc1, 0xb3, 0x9c, 0x1e, 0x48, 0x31, 0x17, 0x8a,
-	0xe4, 0xc1, 0x0d, 0x68, 0x17, 0xf3, 0x5c, 0x90, 0x8c, 0xca, 0xd0, 0xdb, 0xf6, 0x76, 0xfc, 0xb8,
-	0x8a, 0x83, 0x3b, 0xb0, 0xc9, 0xe9, 0x89, 0x4e, 0xaa, 0x84, 0x86, 0x49, 0xe8, 0x22, 0x78, 0x54,
-	0x26, 0xbd, 0x07, 0xfe, 0xc8, 0x94, 0x4c, 0x58, 0x16, 0x5e, 0xb4, 0x15, 0x2c, 0xb0, 0x9f, 0x99,
-	0xc5, 0x53, 0x4d, 0x13, 0xc5, 0x5e, 0xd0, 0xb0, 0xb9, 0xed, 0xed, 0x34, 0xe3, 0x36, 0x02, 0x87,
-	0xec, 0x05, 0x0d, 0x6e, 0x41, 0xe7, 0x58, 0x8a, 0x59, 0x32, 0xa1, 0x6c, 0x3c, 0xd1, 0xe1, 0x25,
-	0xb3, 0x0c, 0x08, 0x7d, 0x65, 0x10, 0x7c, 0x5b, 0x8b, 0x72, 0xb9, 0x65, 0xdf, 0xd6, 0xc2, 0x2d,
-	0xde, 0x04, 0x48, 0x25, 0x25, 0x9a, 0x66, 0x09, 0xd1, 0xe1, 0x86, 0x59, 0xf5, 0x1d, 0x32, 0xd4,
-	0xc1, 0x6d, 0xe8, 0x2e, 0x84, 0xa6, 0x52, 0x25, 0x0b, 0x92, 0xb3, 0x2c, 0x6c, 0x6f, 0x5f, 0xdc,
-	0xf1, 0xe3, 0x8e, 0xc5, 0x9e, 0x23, 0x14, 0xdc, 0x83, 0x9e, 0x4b, 0x61, 0xdc, 0x26, 0xf9, 0x26,
-	0x69, 0xd3, 0xa2, 0xfb, 0x16, 0xac, 0xa5, 0x91, 0x91, 0xd2, 0x84, 0xf1, 0x10, 0xea, 0x69, 0x43,
-	0x0b, 0x46, 0x29, 0xb4, 0x0f, 0x70, 0xf6, 0xa9, 0xc8, 0x83, 0x10, 0x36, 0x16, 0x54, 0x2a, 0x26,
-	0xb8, 0x9b, 0x69, 0x19, 0xe2, 0xb8, 0x47, 0x8c, 0x13, 0xc9, 0xa8, 0x72, 0xd3, 0xac, 0x62, 0x6c,
-	0x39, 0x27, 0x0a, 0xc7, 0x3d, 0x96, 0x24, 0xa3, 0x66, 0x98, 0xcd, 0xb8, 0x83, 0xd8, 0x91, 0x85,
-	0xa2, 0x1f, 0x3c, 0xe8, 0xb8, 0xe7, 0x83, 0x9c, 0xf0, 0xff, 0xbe, 0x91, 0x4a, 0x27, 0x34, 0x2b,
-	0x72, 0x3b, 0x3c, 0xb7, 0x51, 0x85, 0x0d, 0x35, 0xbe, 0x9e, 0x15, 0x92, 0x68, 0xac, 0xec, 0xbe,
-	0x5b, 0x19, 0x47, 0x1c, 0x2e, 0x3f, 0xa6, 0x39, 0x1d, 0x9b, 0xe8, 0x09, 0xd7, 0xa6, 0x66, 0x0f,
-	0x1a, 0x2c, 0x33, 0x4d, 0x34, 0xe3, 0x06, 0xcb, 0xb0, 0xb3, 0x11, 0xc9, 0x09, 0x4f, 0xa9, 0xdb,
-	0xbe, 0x0c, 0x83, 0x6b, 0xd0, 0x52, 0x9a, 0x4c, 0xa9, 0x74, 0x6c, 0x71, 0x51, 0x70, 0x1d, 0x36,
-	0xa6, 0x09, 0xe3, 0x19, 0x3d, 0x71, 0x3b, 0xb6, 0xa6, 0xfb, 0x18, 0x45, 0x3f, 0x37, 0x20, 0x58,
-	0x6d, 0x78, 0x20, 0x44, 0xfe, 0x98, 0x68, 0xf2, 0xc6, 0x8e, 0xab, 0xba, 0x8d, 0xb5, 0xba, 0xf7,
-	0xa1, 0x9f, 0x16, 0x52, 0x52, 0xae, 0x13, 0x49, 0x97, 0x44, 0x66, 0xca, 0x1d, 0xb8, 0xe7, 0xe0,
-	0xd8, 0xa2, 0xc1, 0x87, 0xb0, 0xa5, 0x85, 0x26, 0x79, 0x92, 0x55, 0x9b, 0xb9, 0x4e, 0xfa, 0x06,
-	0x5f, 0xf5, 0x10, 0xdc, 0x85, 0x5e, 0x4e, 0x34, 0x55, 0xda, 0x36, 0x9c, 0x4c, 0x1d, 0x7b, 0xbb,
-	0x16, 0x35, 0x7d, 0x3f, 0xc5, 0x9d, 0x5d, 0x29, 0x21, 0x93, 0x54, 0x14, 0xbc, 0x64, 0x71, 0xaf,
-	0x82, 0x1f, 0x21, 0x1a, 0x0c, 0xe1, 0xe6, 0x5a, 0xb9, 0x25, 0x51, 0x49, 0xc1, 0x6b, 0x6d, 0x20,
-	0xbd, 0xdb, 0xf1, 0x8d, 0x5a, 0xf5, 0x6f, 0x89, 0x3a, 0xaa, 0x65, 0x44, 0x3f, 0x79, 0xe0, 0x3f,
-	0x2e, 0xab, 0xbe, 0x31, 0x9b, 0xda, 0x6c, 0x1b, 0xf5, 0xd9, 0x06, 0x1f, 0xc1, 0xe5, 0x55, 0x91,
-	0x84, 0xcc, 0x4c, 0x93, 0x76, 0x3c, 0x5b, 0xab, 0x85, 0xa1, 0xc1, 0x6b, 0x13, 0x6e, 0xae, 0x4d,
-	0xf8, 0x7d, 0xf0, 0xab, 0x03, 0x99, 0x41, 0xf8, 0xf1, 0x0a, 0x88, 0x0e, 0xa1, 0xf5, 0x05, 0x1e,
-	0x46, 0x22, 0x27, 0x48, 0x6a, 0xe7, 0xe0, 0x38, 0xe1, 0x42, 0xec, 0x6f, 0x2e, 0x44, 0x9e, 0x54,
-	0x4d, 0xb7, 0x30, 0xdc, 0x37, 0x1f, 0x75, 0xad, 0x29, 0x17, 0x45, 0xbf, 0x6d, 0x40, 0x13, 0x99,
-	0x70, 0x1e, 0xef, 0x8c, 0x08, 0x88, 0x92, 0x06, 0x65, 0x18, 0x04, 0xd0, 0xe4, 0x64, 0x46, 0x1d,
-	0xeb, 0xcc, 0x33, 0x66, 0xcb, 0x82, 0x6b, 0x36, 0xa3, 0xee, 0x48, 0x65, 0x88, 0xd9, 0xb9, 0x18,
-	0x0b, 0x77, 0x1c, 0xf3, 0x1c, 0x0c, 0xa0, 0xed, 0x7e, 0x2f, 0x65, 0x3e, 0xa4, 0xff, 0xb0, 0x11,
-	0x7a, 0x71, 0x85, 0x61, 0xb3, 0xa9, 0xe0, 0xc7, 0x6c, 0x6c, 0xbe, 0x97, 0x1f, 0xbb, 0x08, 0x79,
-	0x60, 0x45, 0x2c, 0x21, 0x32, 0x9d, 0xb0, 0x05, 0x45, 0x39, 0x32, 0x3c, 0xb0, 0xf0, 0xd0, 0xa1,
-	0x28, 0x35, 0xa8, 0x8e, 0x6a, 0x95, 0xe7, 0x9b, 0xbc, 0x4d, 0x83, 0x56, 0x69, 0x77, 0x60, 0xd3,
-	0x12, 0xd5, 0xea, 0xac, 0x0a, 0xc1, 0x92, 0xcf, 0x80, 0x56, 0xdf, 0x55, 0xf0, 0x09, 0x5c, 0xa9,
-	0x27, 0x55, 0xdc, 0xef, 0x98, 0xdc, 0xa0, 0x96, 0x5b, 0xf2, 0x1f, 0x65, 0x41, 0x13, 0xa9, 0x4b,
-	0xc5, 0xed, 0x3a, 0x59, 0x40, 0xcc, 0x89, 0xee, 0x7d, 0xe8, 0x5b, 0x33, 0x48, 0x18, 0xd7, 0x54,
-	0x2e, 0x48, 0x1e, 0x6e, 0xda, 0x93, 0x58, 0x78, 0xdf, 0xa1, 0x78, 0x12, 0x31, 0xa7, 0x28, 0x18,
-	0x7c, 0x9c, 0xa4, 0x42, 0xe9, 0xb0, 0x67, 0x4f, 0x52, 0xa1, 0x8f, 0x84, 0x32, 0x8c, 0x9a, 0x93,
-	0x42, 0xd1, 0x2c, 0xec, 0x1b, 0x86, 0xbb, 0x08, 0xbf, 0xcb, 0xb1, 0xe1, 0x8c, 0x0a, 0xb7, 0x8c,
-	0xd8, 0x96, 0x21, 0x9e, 0x3d, 0x17, 0x4b, 0xfc, 0x55, 0x2c, 0x12, 0x5e, 0xb6, 0x9e, 0x64, 0x41,
-	0x47, 0xb4, 0x5b, 0xd0, 0xb1, 0x67, 0xc7, 0x1c, 0x15, 0x06, 0xd6, 0x59, 0x0c, 0x84, 0x19, 0x0a,
-	0xeb, 0x5b, 0xee, 0xaa, 0xf0, 0x7f, 0xb6, 0xbe, 0x0b, 0x6b, 0xf5, 0x1d, 0xd5, 0xaf, 0xd4, 0xeb,
-	0x1f, 0x5a, 0xc2, 0x57, 0xf5, 0x4d, 0x4e, 0x78, 0xb5, 0x56, 0xdf, 0x64, 0x9c, 0x2b, 0x25, 0xd7,
-	0xce, 0x97, 0x92, 0x67, 0xd0, 0x77, 0x5f, 0x68, 0xee, 0x3c, 0x39, 0xbc, 0xbe, 0xed, 0xed, 0x74,
-	0x3e, 0xbd, 0xb7, 0x7b, 0xae, 0x89, 0xef, 0xae, 0x1b, 0x78, 0xdc, 0x1b, 0xad, 0x1b, 0xfa, 0x07,
-	0xd0, 0x9f, 0x91, 0x93, 0xf2, 0xab, 0x1b, 0xe3, 0x0d, 0xed, 0xe8, 0x67, 0xe4, 0xc4, 0xbe, 0x6b,
-	0xdc, 0xf7, 0x73, 0x68, 0xcf, 0x9d, 0x5f, 0x85, 0xff, 0x37, 0x1b, 0xde, 0x7a, 0xcb, 0x86, 0xa5,
-	0xad, 0xc5, 0xd5, 0x0b, 0xc1, 0x13, 0xe8, 0x3a, 0x97, 0x4a, 0xe6, 0x39, 0xe1, 0xe1, 0x0d, 0x53,
-	0x20, 0x7a, 0x4b, 0x81, 0x9a, 0x63, 0xc5, 0x9d, 0x62, 0x15, 0x44, 0xbf, 0x7a, 0xc6, 0x34, 0x6d,
-	0xe3, 0x6b, 0x17, 0x09, 0xef, 0xcc, 0x45, 0xa2, 0x26, 0x10, 0x8d, 0x35, 0x81, 0xa8, 0xdf, 0x5f,
-	0x2e, 0x9e, 0xb9, 0xbf, 0x9c, 0xb9, 0x60, 0x34, 0xdf, 0x7d, 0xc1, 0xb8, 0x74, 0xe6, 0x82, 0x71,
-	0x1b, 0xba, 0xc7, 0x8c, 0x93, 0x9c, 0xbd, 0xb0, 0x2e, 0x69, 0xa5, 0xbb, 0x53, 0x61, 0x43, 0x1d,
-	0xfd, 0xed, 0x41, 0xcb, 0x51, 0xa2, 0xa6, 0x6d, 0xde, 0x5b, 0xb5, 0xad, 0xf1, 0x6f, 0xb4, 0x0d,
-	0xc9, 0x53, 0xf0, 0x91, 0xe0, 0x19, 0xfe, 0x3b, 0x2e, 0xc3, 0xf9, 0x50, 0x85, 0x3b, 0x45, 0x1e,
-	0x00, 0xa4, 0x62, 0x36, 0x63, 0xca, 0x5c, 0x01, 0xac, 0x56, 0xd5, 0x10, 0xec, 0x6a, 0x26, 0x38,
-	0x43, 0x1e, 0xb7, 0x6c, 0x57, 0x2e, 0xc4, 0x95, 0x25, 0x1d, 0x29, 0xa6, 0xa9, 0x13, 0xab, 0x32,
-	0xac, 0x94, 0xaf, 0x5d, 0x53, 0x3e, 0xfc, 0x4f, 0x05, 0xe3, 0x5a, 0x39, 0x41, 0x72, 0x51, 0xf4,
-	0x8b, 0x07, 0x5b, 0x47, 0x65, 0x4f, 0xe5, 0x55, 0xe0, 0x0a, 0x5c, 0xb2, 0x56, 0x63, 0x55, 0xd9,
-	0x06, 0xef, 0x1c, 0xc3, 0xb9, 0xf7, 0x81, 0x35, 0x57, 0x69, 0x9e, 0x71, 0x15, 0xfc, 0x4f, 0x8d,
-	0xb0, 0xa3, 0x6d, 0x19, 0xfd, 0x76, 0x06, 0x5c, 0x82, 0xdf, 0xa0, 0x88, 0xaf, 0x26, 0xdc, 0x5a,
-	0x73, 0x8f, 0xaf, 0xa1, 0x57, 0x75, 0x7d, 0xa8, 0x89, 0xa6, 0xc8, 0x84, 0x5c, 0x2c, 0x93, 0x7a,
-	0xdf, 0xed, 0x5c, 0x2c, 0xad, 0x49, 0xde, 0x04, 0x98, 0xb0, 0xf1, 0x64, 0xcd, 0x40, 0x7d, 0x44,
-	0xcc, 0xf2, 0xc3, 0x2f, 0x7f, 0x7f, 0x35, 0xf0, 0x5e, 0xbe, 0x1a, 0x78, 0x7f, 0xbd, 0x1a, 0x78,
-	0x3f, 0xbe, 0x1e, 0x5c, 0x78, 0xf9, 0x7a, 0x70, 0xe1, 0x8f, 0xd7, 0x83, 0x0b, 0xdf, 0x7f, 0x3c,
-	0x66, 0x7a, 0x52, 0x8c, 0x76, 0x53, 0x31, 0xdb, 0x7b, 0xfa, 0xdd, 0xf3, 0x27, 0xcf, 0xa8, 0x5e,
-	0x0a, 0x39, 0xdd, 0x4b, 0x27, 0x84, 0xf1, 0xbd, 0x93, 0xd5, 0x35, 0x5e, 0x9f, 0xce, 0xa9, 0x1a,
-	0xb5, 0xcc, 0xff, 0xf5, 0xd9, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0x9b, 0x9d, 0x65, 0xbc, 0xe4,
-	0x0b, 0x00, 0x00,
+	// 1367 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x57, 0x4d, 0x73, 0x1b, 0x45,
+	0x13, 0xce, 0xca, 0xb2, 0x2c, 0xb5, 0x6c, 0x39, 0xd9, 0x37, 0x1f, 0xfb, 0x1a, 0xac, 0x38, 0x9b,
+	0x84, 0x98, 0xa2, 0xb0, 0x09, 0x1c, 0x39, 0x29, 0x1f, 0x80, 0x2b, 0x55, 0x29, 0xb3, 0xc6, 0xe1,
+	0xeb, 0xb0, 0x35, 0xda, 0x1d, 0x4b, 0x53, 0x5e, 0xcd, 0xa8, 0x76, 0x66, 0x25, 0x3b, 0x47, 0x7e,
+	0x00, 0xc5, 0x8d, 0x2b, 0xc5, 0xff, 0xe0, 0x40, 0x71, 0xe1, 0x98, 0x23, 0xdc, 0xa8, 0xe4, 0x7f,
+	0x50, 0x54, 0xcf, 0xcc, 0xae, 0x76, 0x15, 0x29, 0x15, 0xc2, 0x4d, 0xfd, 0x4c, 0x6f, 0x4f, 0x4f,
+	0xf7, 0x33, 0x4f, 0x8f, 0xe0, 0xd6, 0xe9, 0xf9, 0x84, 0xee, 0xa7, 0x74, 0xc0, 0xa4, 0x4a, 0xcf,
+	0xf7, 0x27, 0x77, 0xfb, 0x54, 0x91, 0xbb, 0x05, 0xb0, 0x37, 0x4e, 0x85, 0x12, 0xee, 0x15, 0xf4,
+	0xda, 0x2b, 0x40, 0xeb, 0xe5, 0xff, 0x59, 0x83, 0xce, 0xbd, 0x8c, 0xc7, 0x09, 0x3d, 0x4c, 0xc5,
+	0x58, 0x48, 0x92, 0xb8, 0x5b, 0xd0, 0xcc, 0xc6, 0x89, 0x20, 0x31, 0x4d, 0x3d, 0x67, 0xc7, 0xd9,
+	0x6d, 0x05, 0x85, 0xed, 0xde, 0x84, 0x0d, 0x4e, 0xcf, 0x54, 0x58, 0x38, 0xd4, 0xb4, 0xc3, 0x3a,
+	0x82, 0xc7, 0xb9, 0xd3, 0x5b, 0xd0, 0xea, 0xeb, 0x90, 0x21, 0x8b, 0xbd, 0x15, 0x13, 0xc1, 0x00,
+	0x07, 0xb1, 0x5e, 0x3c, 0x57, 0x34, 0x94, 0xec, 0x29, 0xf5, 0xea, 0x3b, 0xce, 0x6e, 0x3d, 0x68,
+	0x22, 0x70, 0xc4, 0x9e, 0x52, 0xf7, 0x3a, 0xb4, 0x4f, 0x52, 0x31, 0x0a, 0x87, 0x94, 0x0d, 0x86,
+	0xca, 0x5b, 0xd5, 0xcb, 0x80, 0xd0, 0x67, 0x1a, 0xc1, 0xaf, 0x95, 0xc8, 0x97, 0x1b, 0xe6, 0x6b,
+	0x25, 0xec, 0xe2, 0x36, 0x40, 0x94, 0x52, 0xa2, 0x68, 0x1c, 0x12, 0xe5, 0xad, 0xe9, 0xd5, 0x96,
+	0x45, 0x7a, 0xca, 0xbd, 0x01, 0xeb, 0x13, 0xa1, 0x68, 0x2a, 0xc3, 0x09, 0x49, 0x58, 0xec, 0x35,
+	0x77, 0x56, 0x76, 0x5b, 0x41, 0xdb, 0x60, 0x4f, 0x10, 0x72, 0x6f, 0x43, 0xc7, 0xba, 0x30, 0x6e,
+	0x9c, 0x5a, 0xda, 0x69, 0xc3, 0xa0, 0x07, 0x06, 0x2c, 0xb9, 0x91, 0xbe, 0x54, 0x84, 0x71, 0x0f,
+	0xca, 0x6e, 0x3d, 0x03, 0xfa, 0x11, 0x34, 0x0f, 0xb1, 0xf6, 0x91, 0x48, 0x5c, 0x0f, 0xd6, 0x26,
+	0x34, 0x95, 0x4c, 0x70, 0x5b, 0xd3, 0xdc, 0xc4, 0x72, 0xf7, 0x19, 0x27, 0x29, 0xa3, 0xd2, 0x56,
+	0xb3, 0xb0, 0x31, 0xe5, 0x84, 0x48, 0x2c, 0xf7, 0x20, 0x25, 0x31, 0xd5, 0xc5, 0xac, 0x07, 0x6d,
+	0xc4, 0x8e, 0x0d, 0xe4, 0x7f, 0xe7, 0x40, 0xdb, 0xfe, 0x3e, 0x4c, 0x08, 0x7f, 0xf3, 0x8d, 0x64,
+	0x34, 0xa4, 0x71, 0x96, 0x98, 0xe2, 0xd9, 0x8d, 0x0a, 0xac, 0xa7, 0xf0, 0xf3, 0x38, 0x4b, 0x89,
+	0xc2, 0xc8, 0xb6, 0x6f, 0xb9, 0xed, 0x73, 0xb8, 0xf4, 0x80, 0x26, 0x74, 0xa0, 0xad, 0x87, 0x5c,
+	0xe9, 0x98, 0x1d, 0xa8, 0xb1, 0x58, 0x27, 0x51, 0x0f, 0x6a, 0x2c, 0xc6, 0xcc, 0xfa, 0x24, 0x21,
+	0x3c, 0xa2, 0x76, 0xfb, 0xdc, 0x74, 0xaf, 0x42, 0x43, 0x2a, 0x72, 0x4a, 0x53, 0xcb, 0x16, 0x6b,
+	0xb9, 0xd7, 0x60, 0xed, 0x34, 0x64, 0x3c, 0xa6, 0x67, 0x76, 0xc7, 0xc6, 0xe9, 0x01, 0x5a, 0xfe,
+	0xcf, 0x35, 0x70, 0x67, 0x1b, 0x1e, 0x0a, 0x91, 0x3c, 0x20, 0x8a, 0xbc, 0xb4, 0xe3, 0x2c, 0x6e,
+	0xad, 0x12, 0xf7, 0x0e, 0x6c, 0x46, 0x59, 0x9a, 0x52, 0xae, 0xc2, 0x94, 0x4e, 0x49, 0x1a, 0x4b,
+	0x7b, 0xe0, 0x8e, 0x85, 0x03, 0x83, 0xba, 0xef, 0xc2, 0x45, 0x25, 0x14, 0x49, 0xc2, 0xb8, 0xd8,
+	0xcc, 0x66, 0xb2, 0xa9, 0xf1, 0x59, 0x0e, 0xee, 0x2d, 0xe8, 0x24, 0x44, 0x51, 0xa9, 0x4c, 0xc2,
+	0xe1, 0xa9, 0x65, 0xef, 0xba, 0x41, 0x75, 0xde, 0x8f, 0x70, 0x67, 0x1b, 0x4a, 0xa4, 0x61, 0x24,
+	0x32, 0x9e, 0xb3, 0xb8, 0x53, 0xc0, 0xf7, 0x11, 0x75, 0x7b, 0xb0, 0x5d, 0x09, 0x37, 0x25, 0x32,
+	0xcc, 0x78, 0x29, 0x0d, 0xa4, 0x77, 0x33, 0xd8, 0x2a, 0x45, 0xff, 0x92, 0xc8, 0xe3, 0x92, 0x87,
+	0xff, 0xa3, 0x03, 0xad, 0x07, 0x79, 0xd4, 0x97, 0x6a, 0x53, 0xaa, 0x6d, 0xad, 0x5c, 0x5b, 0xf7,
+	0x3d, 0xb8, 0x34, 0x0b, 0x12, 0x92, 0x91, 0x4e, 0xd2, 0x94, 0xe7, 0xe2, 0x6c, 0xa1, 0xa7, 0xf1,
+	0x52, 0x85, 0xeb, 0x95, 0x0a, 0xbf, 0x0d, 0xad, 0xe2, 0x40, 0xba, 0x10, 0xad, 0x60, 0x06, 0xf8,
+	0x47, 0xd0, 0xf8, 0x04, 0x0f, 0x93, 0x22, 0x27, 0x48, 0x64, 0xea, 0x60, 0x39, 0x61, 0x4d, 0xcc,
+	0x6f, 0x2c, 0x44, 0x12, 0x16, 0x49, 0x37, 0xd0, 0x3c, 0xd0, 0x4d, 0xad, 0x24, 0x65, 0x2d, 0xff,
+	0xb7, 0x35, 0xa8, 0x23, 0x13, 0x16, 0xf1, 0x4e, 0x8b, 0x80, 0xc8, 0x69, 0x90, 0x9b, 0xae, 0x0b,
+	0x75, 0x4e, 0x46, 0xd4, 0xb2, 0x4e, 0xff, 0x46, 0xef, 0x34, 0xe3, 0x8a, 0x8d, 0xa8, 0x3d, 0x52,
+	0x6e, 0xa2, 0x77, 0x22, 0x06, 0xc2, 0x1e, 0x47, 0xff, 0x76, 0xbb, 0xd0, 0xb4, 0xd7, 0x4b, 0xea,
+	0x46, 0xb6, 0xee, 0xd5, 0x3c, 0x27, 0x28, 0x30, 0x4c, 0x36, 0x12, 0xfc, 0x84, 0x0d, 0x74, 0xbf,
+	0x5a, 0x81, 0xb5, 0x90, 0x07, 0x46, 0xc4, 0x42, 0x92, 0x46, 0x43, 0x36, 0xa1, 0x28, 0x47, 0x9a,
+	0x07, 0x06, 0xee, 0x59, 0x14, 0xa5, 0x06, 0xd5, 0x51, 0xce, 0xfc, 0x5a, 0xda, 0x6f, 0x43, 0xa3,
+	0x85, 0xdb, 0x4d, 0xd8, 0x30, 0x44, 0x35, 0x3a, 0x2b, 0x3d, 0x30, 0xe4, 0xd3, 0xa0, 0xd1, 0x77,
+	0xe9, 0x7e, 0x00, 0x97, 0xcb, 0x4e, 0x05, 0xf7, 0xdb, 0xda, 0xd7, 0x2d, 0xf9, 0xe6, 0xfc, 0x47,
+	0x59, 0x50, 0x24, 0x55, 0xb9, 0xe2, 0xae, 0x5b, 0x59, 0x40, 0xcc, 0x8a, 0xee, 0x1d, 0xd8, 0x34,
+	0xc3, 0x20, 0x64, 0x5c, 0xd1, 0x74, 0x42, 0x12, 0x6f, 0xc3, 0x9c, 0xc4, 0xc0, 0x07, 0x16, 0xc5,
+	0x93, 0x88, 0x31, 0x45, 0xc1, 0xe0, 0x83, 0x30, 0x12, 0x52, 0x79, 0x1d, 0x73, 0x92, 0x02, 0xbd,
+	0x2f, 0xa4, 0x66, 0xd4, 0x98, 0x64, 0x92, 0xc6, 0xde, 0xa6, 0x66, 0xb8, 0xb5, 0xb0, 0x2f, 0x27,
+	0x9a, 0x33, 0xd2, 0xbb, 0xa8, 0xc5, 0x36, 0x37, 0xf1, 0xec, 0x89, 0x98, 0xe2, 0x55, 0x31, 0x88,
+	0x77, 0xc9, 0xcc, 0x24, 0x03, 0x5a, 0xa2, 0x5d, 0x87, 0xb6, 0x39, 0x3b, 0xfa, 0x48, 0xcf, 0x35,
+	0x93, 0x45, 0x43, 0xe8, 0x21, 0x31, 0xbe, 0xe1, 0xae, 0xf4, 0xfe, 0x67, 0xe2, 0x5b, 0xb3, 0x14,
+	0xdf, 0x52, 0xfd, 0x72, 0x39, 0xfe, 0x91, 0x21, 0x7c, 0x11, 0x5f, 0xfb, 0x78, 0x57, 0x4a, 0xf1,
+	0xb5, 0xc7, 0x42, 0x29, 0xb9, 0xba, 0x58, 0x4a, 0x1e, 0xc3, 0xa6, 0xed, 0xd0, 0xd8, 0xce, 0x64,
+	0xef, 0xda, 0x8e, 0xb3, 0xdb, 0xfe, 0xf0, 0xf6, 0xde, 0xc2, 0x21, 0xbe, 0x57, 0x1d, 0xe0, 0x41,
+	0xa7, 0x5f, 0x1d, 0xe8, 0xef, 0xc0, 0xe6, 0x88, 0x9c, 0xe5, 0x5d, 0xd7, 0x83, 0xd7, 0x33, 0xa5,
+	0x1f, 0x91, 0x33, 0xf3, 0xad, 0x9e, 0xbe, 0x1f, 0x43, 0x73, 0x6c, 0xe7, 0x95, 0xf7, 0x7f, 0xbd,
+	0xe1, 0xf5, 0x25, 0x1b, 0xe6, 0x63, 0x2d, 0x28, 0x3e, 0x70, 0x1f, 0xc2, 0xba, 0x9d, 0x52, 0xe1,
+	0x38, 0x21, 0xdc, 0xdb, 0xd2, 0x01, 0xfc, 0x25, 0x01, 0x4a, 0x13, 0x2b, 0x68, 0x67, 0x33, 0xc3,
+	0xff, 0xc5, 0xd1, 0x43, 0xd3, 0x24, 0x5e, 0x79, 0x48, 0x38, 0x73, 0x0f, 0x89, 0x92, 0x40, 0xd4,
+	0x2a, 0x02, 0x51, 0x7e, 0xbf, 0xac, 0xcc, 0xbd, 0x5f, 0xe6, 0x1e, 0x18, 0xf5, 0x57, 0x3f, 0x30,
+	0x56, 0xe7, 0x1e, 0x18, 0x37, 0x60, 0xfd, 0x84, 0x71, 0x92, 0xb0, 0xa7, 0x66, 0x4a, 0x1a, 0xe9,
+	0x6e, 0x17, 0x58, 0x4f, 0xf9, 0x7f, 0x3b, 0xd0, 0xb0, 0x94, 0x28, 0x69, 0x9b, 0xb3, 0x54, 0xdb,
+	0x6a, 0xaf, 0xa3, 0x6d, 0x48, 0x9e, 0x8c, 0xf7, 0x05, 0x8f, 0xf1, 0xee, 0x58, 0x0f, 0x3b, 0x87,
+	0x0a, 0xdc, 0x2a, 0x72, 0x17, 0x20, 0x12, 0xa3, 0x11, 0x93, 0xfa, 0x09, 0x60, 0xb4, 0xaa, 0x84,
+	0x60, 0x56, 0x23, 0xc1, 0x19, 0xf2, 0xb8, 0x61, 0xb2, 0xb2, 0x26, 0xae, 0x4c, 0x69, 0x5f, 0x32,
+	0x45, 0xad, 0x58, 0xe5, 0x66, 0xa1, 0x7c, 0xcd, 0x92, 0xf2, 0xe1, 0x3d, 0x15, 0x8c, 0x2b, 0x69,
+	0x05, 0xc9, 0x5a, 0xfe, 0x4f, 0x0e, 0x6c, 0x1d, 0xe7, 0x39, 0x61, 0x25, 0x18, 0x1f, 0x7c, 0x9e,
+	0xd1, 0x8c, 0xe2, 0xb3, 0xe0, 0xdc, 0xbd, 0x0c, 0xab, 0x66, 0xe8, 0x18, 0x7d, 0x36, 0xc6, 0xd2,
+	0x41, 0x5d, 0x2a, 0xd4, 0xca, 0x92, 0x42, 0xd5, 0x2b, 0x85, 0xba, 0x09, 0x1b, 0x5a, 0xdc, 0x71,
+	0x74, 0x69, 0x0d, 0xb7, 0x43, 0x38, 0x07, 0xbf, 0x60, 0x23, 0xea, 0x8f, 0x60, 0xb3, 0x92, 0x21,
+	0x4d, 0x4b, 0x09, 0x38, 0xcb, 0x12, 0xa8, 0x76, 0x6a, 0x51, 0x47, 0x56, 0x16, 0x76, 0xc4, 0xff,
+	0x6a, 0x49, 0x41, 0x8e, 0x14, 0x51, 0x14, 0x09, 0x97, 0x88, 0x69, 0x58, 0x2e, 0x4a, 0x33, 0x11,
+	0x53, 0x33, 0x8b, 0xb7, 0x01, 0x86, 0x6c, 0x30, 0xac, 0xcc, 0xe9, 0x16, 0x22, 0xe6, 0x19, 0xf4,
+	0xab, 0x03, 0xdb, 0x45, 0xe8, 0x99, 0x80, 0xbc, 0x71, 0xb9, 0x2b, 0x53, 0x7b, 0x65, 0x6e, 0x6a,
+	0x97, 0x6b, 0x51, 0x5f, 0xd2, 0x8c, 0xd5, 0x57, 0x37, 0xa3, 0xb1, 0xa0, 0x19, 0xdf, 0x3b, 0xe0,
+	0xce, 0x9f, 0x41, 0xcc, 0xa5, 0xe2, 0xcc, 0xa7, 0xf2, 0xaf, 0xf9, 0xf2, 0xfa, 0x17, 0xc8, 0xff,
+	0x76, 0x79, 0x4d, 0xff, 0x73, 0xc7, 0xee, 0x7d, 0xfa, 0xfb, 0xf3, 0xae, 0xf3, 0xec, 0x79, 0xd7,
+	0xf9, 0xeb, 0x79, 0xd7, 0xf9, 0xe1, 0x45, 0xf7, 0xc2, 0xb3, 0x17, 0xdd, 0x0b, 0x7f, 0xbc, 0xe8,
+	0x5e, 0xf8, 0xe6, 0xfd, 0x01, 0x53, 0xc3, 0xac, 0xbf, 0x17, 0x89, 0xd1, 0xfe, 0xa3, 0xaf, 0x9f,
+	0x3c, 0x7c, 0x4c, 0xd5, 0x54, 0xa4, 0xa7, 0xfb, 0xd1, 0x90, 0x30, 0xbe, 0x7f, 0x36, 0xfb, 0x7f,
+	0xa7, 0xce, 0xc7, 0x54, 0xf6, 0x1b, 0x5a, 0x78, 0x3f, 0xfa, 0x27, 0x00, 0x00, 0xff, 0xff, 0xa7,
+	0xd0, 0xd9, 0x5e, 0xfd, 0x0d, 0x00, 0x00,
 }
 
 func (m *BundleProposal) Marshal() (dAtA []byte, err error) {
@@ -2080,7 +2371,7 @@ func (m *Staker) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *UnbondingEntries) Marshal() (dAtA []byte, err error) {
+func (m *UnbondingStakingQueueEntry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2090,44 +2381,37 @@ func (m *UnbondingEntries) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UnbondingEntries) MarshalTo(dAtA []byte) (int, error) {
+func (m *UnbondingStakingQueueEntry) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UnbondingEntries) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UnbondingStakingQueueEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Amount != 0 {
-		i = encodeVarintRegistry(dAtA, i, uint64(m.Amount))
-		i--
-		dAtA[i] = 0x30
-	}
 	if m.CreationTime != 0 {
 		i = encodeVarintRegistry(dAtA, i, uint64(m.CreationTime))
 		i--
 		dAtA[i] = 0x28
 	}
-	if len(m.Delegator) > 0 {
-		i -= len(m.Delegator)
-		copy(dAtA[i:], m.Delegator)
-		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Delegator)))
+	if m.Amount != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.Amount))
 		i--
-		dAtA[i] = 0x22
+		dAtA[i] = 0x20
+	}
+	if m.PoolId != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.PoolId))
+		i--
+		dAtA[i] = 0x18
 	}
 	if len(m.Staker) > 0 {
 		i -= len(m.Staker)
 		copy(dAtA[i:], m.Staker)
 		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Staker)))
 		i--
-		dAtA[i] = 0x1a
-	}
-	if m.PoolId != 0 {
-		i = encodeVarintRegistry(dAtA, i, uint64(m.PoolId))
-		i--
-		dAtA[i] = 0x10
+		dAtA[i] = 0x12
 	}
 	if m.Index != 0 {
 		i = encodeVarintRegistry(dAtA, i, uint64(m.Index))
@@ -2137,7 +2421,7 @@ func (m *UnbondingEntries) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *UnbondingState) Marshal() (dAtA []byte, err error) {
+func (m *UnbondingStaker) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -2147,12 +2431,189 @@ func (m *UnbondingState) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *UnbondingState) MarshalTo(dAtA []byte) (int, error) {
+func (m *UnbondingStaker) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *UnbondingState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *UnbondingStaker) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.UnbondingAmount != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.UnbondingAmount))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.PoolId != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.PoolId))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.Staker) > 0 {
+		i -= len(m.Staker)
+		copy(dAtA[i:], m.Staker)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Staker)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UnbondingStakingQueueState) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UnbondingStakingQueueState) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UnbondingStakingQueueState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.HighIndex != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.HighIndex))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.LowIndex != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.LowIndex))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UnbondingDelegationQueueEntry) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UnbondingDelegationQueueEntry) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UnbondingDelegationQueueEntry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.CreationTime != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.CreationTime))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.Amount != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.Amount))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.PoolId != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.PoolId))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Delegator) > 0 {
+		i -= len(m.Delegator)
+		copy(dAtA[i:], m.Delegator)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Delegator)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Staker) > 0 {
+		i -= len(m.Staker)
+		copy(dAtA[i:], m.Staker)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Staker)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Index != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.Index))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UnbondingDelegator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UnbondingDelegator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UnbondingDelegator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.UnbondingAmount != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.UnbondingAmount))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.PoolId != 0 {
+		i = encodeVarintRegistry(dAtA, i, uint64(m.PoolId))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Staker) > 0 {
+		i -= len(m.Staker)
+		copy(dAtA[i:], m.Staker)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Staker)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Delegator) > 0 {
+		i -= len(m.Delegator)
+		copy(dAtA[i:], m.Delegator)
+		i = encodeVarintRegistry(dAtA, i, uint64(len(m.Delegator)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *UnbondingDelegationQueueState) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *UnbondingDelegationQueueState) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *UnbondingDelegationQueueState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -2548,7 +3009,7 @@ func (m *Staker) Size() (n int) {
 	return n
 }
 
-func (m *UnbondingEntries) Size() (n int) {
+func (m *UnbondingStakingQueueEntry) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -2557,8 +3018,64 @@ func (m *UnbondingEntries) Size() (n int) {
 	if m.Index != 0 {
 		n += 1 + sovRegistry(uint64(m.Index))
 	}
+	l = len(m.Staker)
+	if l > 0 {
+		n += 1 + l + sovRegistry(uint64(l))
+	}
 	if m.PoolId != 0 {
 		n += 1 + sovRegistry(uint64(m.PoolId))
+	}
+	if m.Amount != 0 {
+		n += 1 + sovRegistry(uint64(m.Amount))
+	}
+	if m.CreationTime != 0 {
+		n += 1 + sovRegistry(uint64(m.CreationTime))
+	}
+	return n
+}
+
+func (m *UnbondingStaker) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Staker)
+	if l > 0 {
+		n += 1 + l + sovRegistry(uint64(l))
+	}
+	if m.PoolId != 0 {
+		n += 1 + sovRegistry(uint64(m.PoolId))
+	}
+	if m.UnbondingAmount != 0 {
+		n += 1 + sovRegistry(uint64(m.UnbondingAmount))
+	}
+	return n
+}
+
+func (m *UnbondingStakingQueueState) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.LowIndex != 0 {
+		n += 1 + sovRegistry(uint64(m.LowIndex))
+	}
+	if m.HighIndex != 0 {
+		n += 1 + sovRegistry(uint64(m.HighIndex))
+	}
+	return n
+}
+
+func (m *UnbondingDelegationQueueEntry) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Index != 0 {
+		n += 1 + sovRegistry(uint64(m.Index))
 	}
 	l = len(m.Staker)
 	if l > 0 {
@@ -2568,16 +3085,42 @@ func (m *UnbondingEntries) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovRegistry(uint64(l))
 	}
-	if m.CreationTime != 0 {
-		n += 1 + sovRegistry(uint64(m.CreationTime))
+	if m.PoolId != 0 {
+		n += 1 + sovRegistry(uint64(m.PoolId))
 	}
 	if m.Amount != 0 {
 		n += 1 + sovRegistry(uint64(m.Amount))
 	}
+	if m.CreationTime != 0 {
+		n += 1 + sovRegistry(uint64(m.CreationTime))
+	}
 	return n
 }
 
-func (m *UnbondingState) Size() (n int) {
+func (m *UnbondingDelegator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Delegator)
+	if l > 0 {
+		n += 1 + l + sovRegistry(uint64(l))
+	}
+	l = len(m.Staker)
+	if l > 0 {
+		n += 1 + l + sovRegistry(uint64(l))
+	}
+	if m.PoolId != 0 {
+		n += 1 + sovRegistry(uint64(m.PoolId))
+	}
+	if m.UnbondingAmount != 0 {
+		n += 1 + sovRegistry(uint64(m.UnbondingAmount))
+	}
+	return n
+}
+
+func (m *UnbondingDelegationQueueState) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -5043,7 +5586,7 @@ func (m *Staker) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
+func (m *UnbondingStakingQueueEntry) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -5066,10 +5609,10 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UnbondingEntries: wiretype end group for non-group")
+			return fmt.Errorf("proto: UnbondingStakingQueueEntry: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UnbondingEntries: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UnbondingStakingQueueEntry: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -5092,25 +5635,6 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
-			}
-			m.PoolId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowRegistry
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.PoolId |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Staker", wireType)
 			}
@@ -5142,7 +5666,373 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 			}
 			m.Staker = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
+			}
+			m.PoolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PoolId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
+			}
+			m.Amount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Amount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreationTime", wireType)
+			}
+			m.CreationTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreationTime |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnbondingStaker) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnbondingStaker: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnbondingStaker: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Staker", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Staker = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
+			}
+			m.PoolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PoolId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UnbondingAmount", wireType)
+			}
+			m.UnbondingAmount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UnbondingAmount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnbondingStakingQueueState) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnbondingStakingQueueState: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnbondingStakingQueueState: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field LowIndex", wireType)
+			}
+			m.LowIndex = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.LowIndex |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HighIndex", wireType)
+			}
+			m.HighIndex = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.HighIndex |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnbondingDelegationQueueEntry) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnbondingDelegationQueueEntry: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnbondingDelegationQueueEntry: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Index", wireType)
+			}
+			m.Index = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Index |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Staker", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Staker = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Delegator", wireType)
 			}
@@ -5174,11 +6064,11 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 			}
 			m.Delegator = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 5:
+		case 4:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CreationTime", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
 			}
-			m.CreationTime = 0
+			m.PoolId = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowRegistry
@@ -5188,12 +6078,12 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CreationTime |= uint64(b&0x7F) << shift
+				m.PoolId |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 6:
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Amount", wireType)
 			}
@@ -5208,6 +6098,25 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.Amount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CreationTime", wireType)
+			}
+			m.CreationTime = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CreationTime |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -5233,7 +6142,7 @@ func (m *UnbondingEntries) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *UnbondingState) Unmarshal(dAtA []byte) error {
+func (m *UnbondingDelegator) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -5256,10 +6165,162 @@ func (m *UnbondingState) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: UnbondingState: wiretype end group for non-group")
+			return fmt.Errorf("proto: UnbondingDelegator: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: UnbondingState: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: UnbondingDelegator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Delegator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Delegator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Staker", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Staker = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PoolId", wireType)
+			}
+			m.PoolId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PoolId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UnbondingAmount", wireType)
+			}
+			m.UnbondingAmount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowRegistry
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.UnbondingAmount |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipRegistry(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthRegistry
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *UnbondingDelegationQueueState) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowRegistry
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: UnbondingDelegationQueueState: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: UnbondingDelegationQueueState: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:

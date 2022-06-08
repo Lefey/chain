@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 
 	v0_1_0 "github.com/KYVENetwork/chain/app/upgrades/v0.1.0"
-	v0_2_0 "github.com/KYVENetwork/chain/app/upgrades/v0.2.0"
 	v0_3_0 "github.com/KYVENetwork/chain/app/upgrades/v0.3.0"
 	v0_4_0 "github.com/KYVENetwork/chain/app/upgrades/v0.4.0"
 
@@ -600,7 +599,7 @@ func GetMaccPerms() map[string][]string {
 
 func (app *App) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler(v0_1_0.UpgradeName, v0_1_0.CreateUpgradeHandler())
-	app.UpgradeKeeper.SetUpgradeHandler(v0_2_0.UpgradeName, v0_2_0.CreateUpgradeHandler(&app.RegistryKeeper))
+	//app.UpgradeKeeper.SetUpgradeHandler(v0_2_0.UpgradeName, v0_2_0.CreateUpgradeHandler(&app.RegistryKeeper))
 	app.UpgradeKeeper.SetUpgradeHandler(v0_3_0.UpgradeName, v0_3_0.CreateUpgradeHandler(&app.RegistryKeeper))
 	app.UpgradeKeeper.SetUpgradeHandler(v0_4_0.UpgradeName, v0_4_0.CreateUpgradeHandler(&app.RegistryKeeper))
 }
