@@ -69,10 +69,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.DelegationEntriesList = k.GetAllDelegationEntries(ctx)
 	genesis.ProposalList = k.GetAllProposal(ctx)
 	genesis.UnbondingStakingQueueState = k.GetUnbondingStakingQueueState(ctx)
-	// TODO add GetAll
-	genesis.UnbondingStakingQueueEntries = []types.UnbondingStakingQueueEntry{}
-	// TODO add GetAll
-	genesis.UnbondingStakerList = []types.UnbondingStaker{}
+	genesis.UnbondingStakingQueueEntries = k.GetAllUnbondingStakingQueueEntries(ctx)
+	genesis.UnbondingStakerList = k.GetAllUnbondingStakers(ctx)
 
 	return genesis
 }

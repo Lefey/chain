@@ -30,6 +30,8 @@ func (k Keeper) StakersList(goCtx context.Context, req *types.QueryStakersListRe
 
 	for _, account := range pool.Stakers {
 		staker, _ := k.GetStaker(ctx, account, req.PoolId)
+		// Load unbondingStaker
+		unbondingStaker, _ := k.GetUnbondingStaker(ctx, req.PoolId, account)
 
 		stakerResponse := types.StakerResponse{
 			Staker:          staker.Account,
@@ -42,6 +44,7 @@ func (k Keeper) StakersList(goCtx context.Context, req *types.QueryStakersListRe
 			Website:         staker.Website,
 			Logo:            staker.Logo,
 			Points:          staker.Points,
+			UnbondingAmount: unbondingStaker.UnbondingAmount,
 		}
 
 		// Fetch total delegation for staker, as it is stored in DelegationPoolData

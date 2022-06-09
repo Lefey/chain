@@ -29,6 +29,9 @@ func (k Keeper) Staker(goCtx context.Context, req *types.QueryStakerRequest) (*t
 	// Load staker
 	staker, found := k.GetStaker(ctx, req.Staker, req.PoolId)
 
+	// Load unbondingStaker
+	unbondingStaker, _ := k.GetUnbondingStaker(ctx, req.PoolId, req.Staker)
+
 	if !found {
 		return nil, sdkErrors.ErrNotFound
 	}
@@ -43,6 +46,8 @@ func (k Keeper) Staker(goCtx context.Context, req *types.QueryStakerRequest) (*t
 		Moniker:         staker.Moniker,
 		Website:         staker.Website,
 		Logo:            staker.Logo,
+		Points:          staker.Points,
+		UnbondingAmount: unbondingStaker.UnbondingAmount,
 	}
 
 	// Fetch total delegation for staker, as it is stored in DelegationPoolData

@@ -9,7 +9,11 @@ import (
 func (k Keeper) StartUnbondingStaker(ctx sdk.Context, poolId uint64, staker string, amount uint64) (error error) {
 
 	// Check if user is able to unstake more
-	unbondingStaker, _ := k.GetUnbondingStaker(ctx, poolId, staker)
+	unbondingStaker, foundUnbondingStaker := k.GetUnbondingStaker(ctx, poolId, staker)
+	if !foundUnbondingStaker {
+		unbondingStaker.Staker = staker
+		unbondingStaker.PoolId = poolId
+	}
 	poolStaker, stakerFound := k.GetStaker(ctx, staker, poolId)
 	if !stakerFound {
 		return errors.New("staker does not exist")
@@ -66,10 +70,10 @@ func (k Keeper) ProcessStakerUnbondingQueue(ctx sdk.Context) {
 		undelegationPerformed = false
 
 		// Get end of queue
-		unbondingStakingEntry, _ := k.GetUnbondingStakingQueueEntry(ctx, unbondingQueueState.LowIndex)
+		unbondingStakingEntry, found := k.GetUnbondingStakingQueueEntry(ctx, unbondingQueueState.LowIndex+1)
 
 		// Check if unbonding time is over
-		if unbondingStakingEntry.CreationTime+uint64(60*60*24 /* TODO Replace with params*/) < uint64(ctx.BlockTime().Unix()) {
+		if found && unbondingStakingEntry.CreationTime+uint64(60 /* TODO Replace with params*/) < uint64(ctx.BlockTime().Unix()) {
 
 			// Update internal UnbondingStaker value
 			unbondingStaker, foundUnbondingStaker := k.GetUnbondingStaker(ctx, unbondingStakingEntry.PoolId, unbondingStakingEntry.Staker)

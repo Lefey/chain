@@ -22,7 +22,6 @@ func (k Keeper) SetUnbondingStakingQueueEntry(ctx sdk.Context, unbondingStakingQ
 	indexStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakingQueueEntryKeyPrefixIndex2)
 	indexStore.Set(types.UnbondingStakingQueueEntryKeyIndex2(
 		unbondingStakingQueueEntry.Staker,
-		unbondingStakingQueueEntry.PoolId,
 		unbondingStakingQueueEntry.Index,
 	), []byte{1})
 }
@@ -48,9 +47,24 @@ func (k Keeper) RemoveUnbondingStakingQueueEntry(ctx sdk.Context, unbondingStaki
 	indexStore := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakingQueueEntryKeyPrefixIndex2)
 	indexStore.Delete(types.UnbondingStakingQueueEntryKeyIndex2(
 		unbondingStakingQueueEntry.Staker,
-		unbondingStakingQueueEntry.PoolId,
 		unbondingStakingQueueEntry.Index,
 	))
+}
+
+// GetAllUnbondingStakingQueueEntries returns all staker unbondings
+func (k Keeper) GetAllUnbondingStakingQueueEntries(ctx sdk.Context) (list []types.UnbondingStakingQueueEntry) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakingQueueEntryKeyPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.UnbondingStakingQueueEntry
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
 }
 
 // ###################
@@ -108,4 +122,20 @@ func (k Keeper) GetUnbondingStaker(ctx sdk.Context, poolId uint64, staker string
 func (k Keeper) RemoveUnbondingStaker(ctx sdk.Context, unbondingStaker *types.UnbondingStaker) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakerKeyPrefix)
 	store.Delete(types.UnbondingStakerKey(unbondingStaker.PoolId, unbondingStaker.Staker))
+}
+
+// GetAllUnbondingStakers returns all unbonding stakers
+func (k Keeper) GetAllUnbondingStakers(ctx sdk.Context) (list []types.UnbondingStaker) {
+	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakerKeyPrefix)
+	iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+	defer iterator.Close()
+
+	for ; iterator.Valid(); iterator.Next() {
+		var val types.UnbondingStaker
+		k.cdc.MustUnmarshal(iterator.Value(), &val)
+		list = append(list, val)
+	}
+
+	return
 }
