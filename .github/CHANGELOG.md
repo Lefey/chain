@@ -28,6 +28,10 @@ Ref: https://keepachangelog.com/en/1.0.0/
 - Bump [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) to [`v0.45.5`](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.45.5). See [CHANGELOG](https://github.com/cosmos/cosmos-sdk/blob/v0.45.5/CHANGELOG.md#v0455---2022-06-09) for more details.
 - Bump [IBC](https://github.com/cosmos/ibc-go) to [`v3.0.0`](https://github.com/cosmos/ibc-go/releases/tag/v3.0.0). See [CHANGELOG](https://github.com/cosmos/ibc-go/blob/v3.0.0/CHANGELOG.md#v300---2022-03-15) for more details.
 
+### Client Breaking Changes
+
+- Switch vote type in `MsgVoteProposal` from `uint64` to `enum`.
+
 ## [v0.4.0](https://github.com/KYVENetwork/chain/releases/tag/v0.4.0) - 2022-06-7
 
 ### Features

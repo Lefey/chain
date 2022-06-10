@@ -135,11 +135,9 @@ service Query {
   }
 }
 
-
 // ######################
 // =====   PARAMS   =====
 // ######################
-
 
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
@@ -150,11 +148,9 @@ message QueryParamsResponse {
   kyve.registry.v1beta1.Params params = 1 [(gogoproto.nullable) = false];
 }
 
-
 // ######################
 // =====    POOL    =====
 // ######################
-
 
 // QueryPoolRequest is the request type for the Query/Pool RPC method.
 message QueryPoolRequest {
@@ -266,11 +262,9 @@ message StakerResponse {
   uint64 unbonding_amount = 11;
 }
 
-
 // ######################
 // =====    WARP    =====
 // ######################
-
 
 // QueryProposalRequest is the request type for the Query/Proposal RPC method.
 message QueryProposalRequest {
@@ -370,11 +364,9 @@ message QueryStakeInfoResponse {
   string minimum_stake = 3;
 }
 
-
 // ###################
 // ===== ACCOUNT =====
 // ###################
-
 
 // QueryAccountAssetsRequest is the request type for the Query/AccountAssets RPC method.
 message QueryAccountAssetsRequest {
@@ -399,7 +391,6 @@ message QueryAccountAssetsResponse {
   // protocol_funding ...
   uint64 protocol_funding = 7;
 }
-
 
 // QueryAccountFundedListRequest ...
 message QueryAccountStakingUnbondingsRequest {
@@ -455,7 +446,6 @@ message DelegationUnbonding {
   kyve.registry.v1beta1.Pool pool = 4;
 }
 
-
 // QueryAccountFundedListRequest is the request type for the account queries with pagination
 message QueryAccountFundedListRequest {
   // pagination defines an optional pagination for the request.
@@ -481,7 +471,6 @@ message Funded {
   // pool ...
   kyve.registry.v1beta1.Pool pool = 3;
 }
-
 
 // QueryAccountStakedListRequest ...
 message QueryAccountStakedListRequest {
@@ -547,11 +536,9 @@ message DelegatorResponse {
   kyve.registry.v1beta1.DelegationPoolData delegation_pool_data = 6;
 }
 
-
 // ######################
 // ===== DELEGATION =====
 // ######################
-
 
 // QueryDelegatorRequest is the request type for the Query/Delegator RPC method.
 message QueryDelegatorRequest {
