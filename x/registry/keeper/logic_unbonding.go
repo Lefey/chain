@@ -77,7 +77,7 @@ func (k Keeper) ProcessStakerUnbondingQueue(ctx sdk.Context) {
 		unbondingStakingEntry, found := k.GetUnbondingStakingQueueEntry(ctx, unbondingQueueState.LowIndex+1)
 
 		// Check if unbonding time is over
-		if found && unbondingStakingEntry.CreationTime+uint64(60 /* TODO Replace with params*/) < uint64(ctx.BlockTime().Unix()) {
+		if found && unbondingStakingEntry.CreationTime+uint64(k.UnbondingStakingTime(ctx)) < uint64(ctx.BlockTime().Unix()) {
 
 			// Update internal UnbondingStaker value
 			unbondingStaker, foundUnbondingStaker := k.GetUnbondingStaker(ctx, unbondingStakingEntry.PoolId, unbondingStakingEntry.Staker)
@@ -195,7 +195,7 @@ func (k Keeper) ProcessDelegatorUnbondingQueue(ctx sdk.Context) {
 		unbondingDelegationEntry, found := k.GetUnbondingDelegationQueueEntry(ctx, unbondingQueueState.LowIndex+1)
 
 		// Check if unbonding time is over
-		if found && unbondingDelegationEntry.CreationTime+uint64(60 /* TODO Replace with params*/) < uint64(ctx.BlockTime().Unix()) {
+		if found && unbondingDelegationEntry.CreationTime+uint64(k.UnbondingDelegationTime(ctx)) < uint64(ctx.BlockTime().Unix()) {
 
 			// Transfer the money
 			err := k.TransferToAddress(ctx, unbondingDelegationEntry.Delegator, unbondingDelegationEntry.Amount)
