@@ -267,20 +267,6 @@ message UnbondingDelegationQueueEntry {
   uint64 creation_time = 6;
 }
 
-// UnbondingStakingEntry
-// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
-// executed after the unbonding time is over.
-message UnbondingDelegator {
-  // staker ...
-  string delegator = 1;
-  // staker ...
-  string staker = 2;
-  // pool_id ...
-  uint64 pool_id = 3;
-  // amount ...
-  uint64 unbonding_amount = 4;
-}
-
 // UnbondingState stores the state for the unbonding of stakes and delegations.
 message UnbondingDelegationQueueState {
   // low_index ...

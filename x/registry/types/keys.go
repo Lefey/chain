@@ -123,8 +123,8 @@ var (
 
 	// UnbondingDelegationQueueEntryKeyPrefix ...
 	UnbondingDelegationQueueEntryKeyPrefix = []byte{12}
-	// UnbondingDelegatorKeyPrefix ...
-	UnbondingDelegatorKeyPrefix = []byte{13}
+	// UnbondingDelegationQueueEntryKeyPrefixIndex2 ...
+	UnbondingDelegationQueueEntryKeyPrefixIndex2 = []byte{13}
 )
 
 // StakerKey returns the store Key to retrieve a Staker from the index fields
@@ -182,6 +182,13 @@ func UnbondingStakingQueueEntryKeyIndex2(staker string, index uint64) []byte {
 
 func UnbondingStakerKey(poolId uint64, staker string) []byte {
 	return KeyPrefixBuilder{}.AString(staker).AInt(poolId).Key
+}
+
+func UnbondingDelegationQueueEntryKey(index uint64) []byte {
+	return KeyPrefixBuilder{}.AInt(index).Key
+}
+func UnbondingDelegationQueueEntryKeyIndex2(delegator string, index uint64) []byte {
+	return KeyPrefixBuilder{}.AString(delegator).AInt(index).Key
 }
 
 type KeyPrefixBuilder struct {

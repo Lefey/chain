@@ -92,9 +92,14 @@ service Query {
     option (google.api.http).get = "/kyve/registry/v1beta1/account_assets/{address}";
   }
 
-  // AccountAssets returns an overview of the sum of all balances for a given user. e.g. balance, staking, funding, etc.
+  // AccountStakingUnbondings ...
   rpc AccountStakingUnbondings(QueryAccountStakingUnbondingsRequest) returns (QueryAccountStakingUnbondingsResponse) {
     option (google.api.http).get = "/kyve/registry/v1beta1/account_staking_unbondings/{address}";
+  }
+
+  // AccountDelegationUnbondings ...
+  rpc AccountDelegationUnbondings(QueryAccountDelegationUnbondingsRequest) returns (QueryAccountDelegationUnbondingsResponse) {
+    option (google.api.http).get = "/kyve/registry/v1beta1/account_delegation_unbondings/{address}";
   }
 
   // AccountFundedList returns all pools the given user has funded into.
@@ -420,6 +425,34 @@ message StakingUnbonding {
   uint64 creation_time = 2;
   // pool ...
   kyve.registry.v1beta1.Pool pool = 3;
+}
+
+// QueryAccountFundedListRequest ...
+message QueryAccountDelegationUnbondingsRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  // address ...
+  string address = 2;
+}
+
+// QueryAccountAssetsResponse is the response type for the Query/AccountAssets RPC method.
+message QueryAccountDelegationUnbondingsResponse {
+  // balance ...
+  repeated kyve.registry.v1beta1.DelegationUnbonding unbondings = 1 [(gogoproto.nullable) = false];
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryAccountAssetsResponse is the response type for the Query/AccountAssets RPC method.
+message DelegationUnbonding {
+  // amount
+  uint64 amount = 1;
+  // creation_time
+  uint64 creation_time = 2;
+  // creation_time
+  kyve.registry.v1beta1.StakerResponse staker = 3;
+  // pool ...
+  kyve.registry.v1beta1.Pool pool = 4;
 }
 
 
