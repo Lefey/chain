@@ -52,6 +52,13 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 		k.SetUnbondingStaker(ctx, elem)
 	}
 
+	// Set state of unbonding-queue
+	k.SetUnbondingDelegationQueueState(ctx, genState.GetUnbondingDelegationQueueState())
+	// Set all the unbondingEntries
+	for _, elem := range genState.UnbondingDelegationQueueEntries {
+		k.SetUnbondingDelegationQueueEntry(ctx, elem)
+	}
+
 	k.SetParams(ctx, genState.Params)
 }
 
@@ -71,6 +78,8 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.UnbondingStakingQueueState = k.GetUnbondingStakingQueueState(ctx)
 	genesis.UnbondingStakingQueueEntries = k.GetAllUnbondingStakingQueueEntries(ctx)
 	genesis.UnbondingStakerList = k.GetAllUnbondingStakers(ctx)
+	genesis.UnbondingDelegationQueueState = k.GetUnbondingDelegationQueueState(ctx)
+	genesis.UnbondingDelegationQueueEntries = k.GetAllUnbondingDelegationQueueEntries(ctx)
 
 	return genesis
 }
