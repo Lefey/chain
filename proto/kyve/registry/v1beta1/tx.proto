@@ -163,6 +163,18 @@ message MsgSubmitBundleProposal {
 // MsgSubmitBundleProposalResponse defines the Msg/SubmitBundleProposal response type.
 message MsgSubmitBundleProposalResponse {}
 
+// VoteType ...
+enum VoteType {
+  // VOTE_TYPE_UNSPECIFIED ...
+  VOTE_TYPE_UNSPECIFIED = 0;
+  // VOTE_TYPE_YES ...
+  VOTE_TYPE_YES = 1;
+  // VOTE_TYPE_NO ...
+  VOTE_TYPE_NO = 2;
+  // VOTE_TYPE_ABSTAIN ...
+  VOTE_TYPE_ABSTAIN = 3;
+}
+
 // MsgVoteProposal defines a SDK message for voting on a bundle proposal.
 message MsgVoteProposal {
   // creator ...
@@ -172,7 +184,7 @@ message MsgVoteProposal {
   // bundle_id ...
   string bundle_id = 3;
   // vote ...
-  uint64 vote = 4;
+  VoteType vote = 4;
 }
 
 // MsgVoteProposalResponse defines the Msg/VoteProposal response type.
