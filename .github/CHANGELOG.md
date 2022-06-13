@@ -23,6 +23,12 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 ## Unreleased
 
+### Features
+
+- Unbonding time for unstaking from a pool. Protocol node runners have to keep their node running during the unbonding.
+- Unbonding time for undelegating from a staker in a pool. The unbonding is performed immediately but the delegator has
+  to wait until the tokens are transferred back.
+
 ### Improvements
 
 - Bump [Cosmos SDK](https://github.com/cosmos/cosmos-sdk) to [`v0.45.5`](https://github.com/cosmos/cosmos-sdk/releases/tag/v0.45.5). See [CHANGELOG](https://github.com/cosmos/cosmos-sdk/blob/v0.45.5/CHANGELOG.md#v0455---2022-06-09) for more details.
