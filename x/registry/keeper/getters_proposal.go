@@ -17,6 +17,10 @@ func (k Keeper) SetProposal(ctx sdk.Context, proposal types.Proposal) {
 	// Insert bundle id for second index
 	storeIndex := prefix.NewStore(ctx.KVStore(k.storeKey), types.ProposalKeyPrefixIndex2)
 	storeIndex.Set(types.ProposalKeyIndex2(proposal.PoolId, proposal.FromHeight), []byte(proposal.BundleId))
+
+	// Insert bundle id for second index
+	storeIndex3 := prefix.NewStore(ctx.KVStore(k.storeKey), types.ProposalKeyPrefixIndex3)
+	storeIndex3.Set(types.ProposalKeyIndex3(proposal.PoolId, proposal.FinalizedAt), []byte(proposal.BundleId))
 }
 
 // GetProposal returns a proposal from its index

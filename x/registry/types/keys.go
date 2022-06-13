@@ -112,7 +112,9 @@ var (
 	// ProposalKeyPrefix is the prefix to retrieve all Proposal
 	ProposalKeyPrefix = "Proposal/value/" // []byte{0x07}
 	// ProposalKeyPrefixIndex2 is the prefix for a different key order for the DelegatorKeyPrefix
-	ProposalKeyPrefixIndex2 = []byte{8}
+	ProposalKeyPrefixIndex2 = []byte{8, 0}
+	// ProposalKeyPrefixIndex3 is the prefix for a different key order for the DelegatorKeyPrefix
+	ProposalKeyPrefixIndex3 = []byte{8, 1}
 
 	// UnbondingStakingQueueEntryKeyPrefix ...
 	UnbondingStakingQueueEntryKeyPrefix = []byte{9}
@@ -166,9 +168,14 @@ func ProposalKey(bundleId string) []byte {
 	return KeyPrefixBuilder{}.AString(bundleId).Key
 }
 
-// ProposalKey returns the store Key to retrieve a Proposal from the index fields
+// ProposalKeyIndex2 ...
 func ProposalKeyIndex2(poolId uint64, fromId uint64) []byte {
 	return KeyPrefixBuilder{}.AInt(poolId).AInt(fromId).Key
+}
+
+// ProposalKeyIndex3 ...
+func ProposalKeyIndex3(poolId uint64, finalizedAt uint64) []byte {
+	return KeyPrefixBuilder{}.AInt(poolId).AInt(finalizedAt).Key
 }
 
 // === UNBONDING ===

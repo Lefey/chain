@@ -60,12 +60,18 @@ service Query {
 
   // Proposals ...
   rpc Proposals(QueryProposalsRequest) returns (QueryProposalsResponse) {
+    option deprecated = true;
     option (google.api.http).get = "/kyve/registry/v1beta1/proposals/{pool_id}";
   }
 
   // ProposalByHeight ...
   rpc ProposalByHeight(QueryProposalByHeightRequest) returns (QueryProposalByHeightResponse) {
     option (google.api.http).get = "/kyve/registry/v1beta1/proposal_by_height/{pool_id}/{height}";
+  }
+
+  // ProposalByHeight ...
+  rpc ProposalSinceFinalizedAt(QueryProposalSinceFinalizedAtRequest) returns (QueryProposalSinceFinalizedAtResponse) {
+    option (google.api.http).get = "/kyve/registry/v1beta1/proposal_since_finalized_at/{pool_id}/{finalized_at}";
   }
 
   // PROTOCOL NODE - FLOW
@@ -306,6 +312,24 @@ message QueryProposalByHeightRequest {
 message QueryProposalByHeightResponse {
   // proposal ...
   kyve.registry.v1beta1.Proposal proposal = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryProposalByFinalizedAtRequest ...
+message QueryProposalSinceFinalizedAtRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+  // pool_id ...
+  uint64 pool_id = 2;
+  // height ...
+  uint64 finalized_at = 3;
+}
+
+// QueryProposalByFinalizedAtResponse ...
+message QueryProposalSinceFinalizedAtResponse {
+  // proposal ...
+  repeated kyve.registry.v1beta1.Proposal proposals = 1 [(gogoproto.nullable) = false];
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // PROTOCOL NODE - FLOW
