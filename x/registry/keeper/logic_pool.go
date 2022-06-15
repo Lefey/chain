@@ -51,7 +51,11 @@ func (k Keeper) handleNonVoters(ctx sdk.Context, pool *types.Pool) {
 				slashAmount := k.slashStaker(ctx, pool, staker.Account, k.TimeoutSlash(ctx))
 
 				// emit slashing event
-				types.EmitSlashEvent(ctx, pool.Id, staker.Account, slashAmount)
+				ctx.EventManager().EmitTypedEvent(&types.EventSlash{
+					PoolId:  pool.Id,
+					Address: staker.Account,
+					Amount:  slashAmount,
+				})
 
 				// Check if staker is still in stakers list and remove staker.
 				staker, foundStaker = k.GetStaker(ctx, voter, pool.Id)
@@ -65,7 +69,11 @@ func (k Keeper) handleNonVoters(ctx sdk.Context, pool *types.Pool) {
 					k.removeStaker(ctx, pool, &staker)
 
 					// emit unstake event
-					types.EmitUnstakeEvent(ctx, pool.Id, staker.Account, staker.Amount)
+					ctx.EventManager().EmitTypedEvent(&types.EventUnstakePool{
+						PoolId:  pool.Id,
+						Address: staker.Account,
+						Amount:  staker.Amount,
+					})
 				}
 
 				// Update current lowest staker

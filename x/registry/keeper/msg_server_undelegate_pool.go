@@ -60,7 +60,15 @@ func (k msgServer) UndelegatePool(
 	k.SetPool(ctx, pool)
 
 	// Event an undelegate event.
-	types.EmitUndelegateEvent(ctx, pool.Id, delegator.Delegator, msg.Staker, msg.Amount)
+	errEmit := ctx.EventManager().EmitTypedEvent(&types.EventUndelegatePool{
+		PoolId:  pool.Id,
+		Address: delegator.Delegator,
+		Node:    msg.Staker,
+		Amount:  msg.Amount,
+	})
+	if errEmit != nil {
+		return nil, errEmit
+	}
 
 	unbondingError := k.StartUnbondingDelegator(ctx, msg.Id, msg.Staker, msg.Creator, msg.Amount)
 	if unbondingError != nil {

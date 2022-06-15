@@ -125,7 +125,11 @@ func (k Keeper) ProcessStakerUnbondingQueue(ctx sdk.Context) {
 					k.PanicHalt(ctx, "Not enough money in module: "+transferError.Error())
 				}
 
-				types.EmitUnstakeEvent(ctx, pool.Id, unbondingStakingEntry.Staker, unstakeAmount)
+				ctx.EventManager().EmitTypedEvent(&types.EventUnstakePool{
+					PoolId:  pool.Id,
+					Address: unbondingStakingEntry.Staker,
+					Amount:  unstakeAmount,
+				})
 			}
 
 			k.RemoveUnbondingStakingQueueEntry(ctx, &unbondingStakingEntry)
