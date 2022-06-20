@@ -58,7 +58,7 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, fn func(index int64, amount uint64) (stop bool)) {
+func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, fn func(poolId uint64, amount sdk.Int) (stop bool)) {
 	for _, pool := range k.GetAllPool(ctx) {
 		total := uint64(0)
 
@@ -83,7 +83,7 @@ func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, 
 		}
 
 		//
-		stop := fn(int64(pool.Id), total)
+		stop := fn(pool.Id, sdk.NewIntFromUint64(total))
 		if stop {
 			break
 		}
