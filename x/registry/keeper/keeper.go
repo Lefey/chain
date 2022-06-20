@@ -89,3 +89,14 @@ func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, 
 		}
 	}
 }
+
+func (k Keeper) TotalProtocolBonding(ctx sdk.Context) sdk.Int {
+	total := uint64(0)
+
+	for _, pool := range k.GetAllPool(ctx) {
+		total += pool.TotalStake
+		total += pool.TotalDelegation
+	}
+
+	return sdk.NewIntFromUint64(total)
+}
