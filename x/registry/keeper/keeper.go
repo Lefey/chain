@@ -3,12 +3,12 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/libs/log"
-
 	"github.com/KYVENetwork/chain/x/registry/types"
 	"github.com/cosmos/cosmos-sdk/codec"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/tendermint/tendermint/libs/log"
 )
 
 type (
@@ -56,4 +56,36 @@ func NewKeeper(
 
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, fn func(index int64, amount uint64) (stop bool)) {
+	for _, pool := range k.GetAllPool(ctx) {
+		total := uint64(0)
+
+		//
+		staker, isStaker := k.GetStaker(ctx, address.String(), pool.Id)
+		if isStaker {
+			total += staker.Amount
+		}
+
+		//
+		delegatorPrefix := types.KeyPrefixBuilder{Key: types.DelegatorKeyPrefixIndex2}.AString(address.String()).AInt(pool.Id).Key
+		delegatorStore := prefix.NewStore(ctx.KVStore(k.storeKey), delegatorPrefix)
+		delegatorIterator := sdk.KVStorePrefixIterator(delegatorStore, nil)
+
+		defer delegatorIterator.Close()
+
+		for ; delegatorIterator.Valid(); delegatorIterator.Next() {
+			key := delegatorIterator.Key()
+			delegator, _ := k.GetDelegator(ctx, pool.Id, string(key[9:52]), address.String())
+
+			total += delegator.DelegationAmount
+		}
+
+		//
+		stop := fn(int64(pool.Id), total)
+		if stop {
+			break
+		}
+	}
 }
