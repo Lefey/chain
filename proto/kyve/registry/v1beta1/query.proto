@@ -266,6 +266,8 @@ message StakerResponse {
   uint64 points = 10;
   // unbonding_amount ...
   uint64 unbonding_amount = 11;
+  // upload_probability
+  string upload_probability = 12;
 }
 
 // ######################
@@ -526,6 +528,8 @@ message Staked {
   kyve.registry.v1beta1.Pool pool = 6;
   // unbonding_amount ...
   uint64 unbonding_amount = 7;
+  // upload_probability
+  string upload_probability = 8;
 }
 
 // QueryAccountDelegationListRequest ...

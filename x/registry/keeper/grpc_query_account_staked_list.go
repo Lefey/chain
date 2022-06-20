@@ -39,12 +39,13 @@ func (k Keeper) AccountStakedList(goCtx context.Context, req *types.QueryAccount
 			pool, _ := k.GetPool(ctx, staker.PoolId)
 
 			staked = append(staked, types.Staked{
-				Staker:          staker.Account,
-				PoolId:          staker.PoolId,
-				Account:         staker.Account,
-				Amount:          staker.Amount,
-				Pool:            &pool,
-				UnbondingAmount: unbondingStaker.UnbondingAmount,
+				Staker:            staker.Account,
+				PoolId:            staker.PoolId,
+				Account:           staker.Account,
+				Amount:            staker.Amount,
+				Pool:              &pool,
+				UnbondingAmount:   unbondingStaker.UnbondingAmount,
+				UploadProbability: k.GetUploadProbability(ctx, staker.Account, pool.Id).String(),
 			})
 		}
 

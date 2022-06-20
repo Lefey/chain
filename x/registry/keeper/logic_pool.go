@@ -212,6 +212,29 @@ func (k Keeper) getWeightedRandomChoice(candidates []RandomChoiceCandidate, seed
 	return ""
 }
 
+func (k Keeper) GetUploadProbability(ctx sdk.Context, stakerAddress string, poolId uint64) sdk.Dec {
+
+	pool, poolFound := k.GetPool(ctx, poolId)
+	if !poolFound {
+		return sdk.NewDec(0)
+	}
+
+	totalWeight := uint64(0)
+	userWeight := uint64(0)
+
+	for _, s := range pool.Stakers {
+		staker, _ := k.GetStaker(ctx, s, pool.Id)
+		delegation, _ := k.GetDelegationPoolData(ctx, pool.Id, s)
+
+		totalWeight += staker.Amount + getDelegationWeight(delegation.TotalDelegation)
+		if staker.Account == stakerAddress {
+			userWeight = staker.Amount + getDelegationWeight(delegation.TotalDelegation)
+		}
+	}
+
+	return sdk.NewDec(int64(userWeight)).Quo(sdk.NewDec(int64(totalWeight)))
+}
+
 // Calculate Delegation weight to influnce the upload probability
 // formula:
 // A = 10000, dec = 10**9
