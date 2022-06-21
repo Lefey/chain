@@ -129,7 +129,7 @@ message Pool {
   // logo ...
   string logo = 5;
   // versions ...
-  string versions = 6 [deprecated=true];
+  string versions = 6 [deprecated = true];
   // config ...
   string config = 7;
 
@@ -230,24 +230,62 @@ message Staker {
   uint64 points = 9;
 }
 
-// UnbondingEntries ...
-message UnbondingEntries {
-  // index ...
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+message UnbondingStakingQueueEntry {
+  // index is a monotonically increasing integer to order the entries
   uint64 index = 1;
-  // pool_id ...
-  uint64 pool_id = 2;
   // staker ...
-  string staker = 3;
-  // delegator ...
-  string delegator = 4;
+  string staker = 2;
+  // pool_id ...
+  uint64 pool_id = 3;
+  // amount ...
+  uint64 amount = 4;
   // creation_time ...
   uint64 creation_time = 5;
+}
+
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+message UnbondingStaker {
+  // staker ...
+  string staker = 1;
+  // pool_id ...
+  uint64 pool_id = 2;
   // amount ...
-  uint64 amount = 6;
+  uint64 unbonding_amount = 3;
 }
 
 // UnbondingState stores the state for the unbonding of stakes and delegations.
-message UnbondingState {
+message UnbondingStakingQueueState {
+  // low_index ...
+  uint64 low_index = 1;
+  // high_index ...
+  uint64 high_index = 2;
+}
+
+// UnbondingStakingEntry
+// Creates an entry for an upcoming unbonding of a staker which is put in the unbonding fifo queue and
+// executed after the unbonding time is over.
+message UnbondingDelegationQueueEntry {
+  // index is a monotonically increasing integer to order the entries
+  uint64 index = 1;
+  // staker ...
+  string staker = 2;
+  // delegator ...
+  string delegator = 3;
+  // pool_id ...
+  uint64 pool_id = 4;
+  // amount ...
+  uint64 amount = 5;
+  // creation_time ...
+  uint64 creation_time = 6;
+}
+
+// UnbondingState stores the state for the unbonding of stakes and delegations.
+message UnbondingDelegationQueueState {
   // low_index ...
   uint64 low_index = 1;
   // high_index ...

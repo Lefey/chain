@@ -22,11 +22,13 @@ func (k Keeper) AccountAssets(goCtx context.Context, req *types.QueryAccountAsse
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	response := types.QueryAccountAssetsResponse{
-		Balance:            0,
-		ProtocolStaking:    0,
-		ProtocolDelegation: 0,
-		ProtocolRewards:    0,
-		ProtocolFunding:    0,
+		Balance:                     0,
+		ProtocolStaking:             0,
+		ProtocolStakingUnbonding:    0,
+		ProtocolDelegation:          0,
+		ProtocolDelegationUnbonding: 0,
+		ProtocolRewards:             0,
+		ProtocolFunding:             0,
 	}
 
 	// Fetch account balance
@@ -94,6 +96,21 @@ func (k Keeper) AccountAssets(goCtx context.Context, req *types.QueryAccountAsse
 		k.cdc.MustUnmarshal(funderIterator.Value(), &val)
 
 		response.ProtocolFunding += val.Amount
+	}
+
+	// Unbondings
+	// Iterate all Staker entries
+	// Fetches the total delegation and calculates the outstanding rewards
+	unbondingStaker := prefix.NewStore(ctx.KVStore(k.storeKey), types.UnbondingStakerKeyPrefix)
+	unbondingStakerIterator := sdk.KVStorePrefixIterator(unbondingStaker, types.KeyPrefixBuilder{}.AString(req.Address).Key)
+
+	defer unbondingStakerIterator.Close()
+
+	for ; unbondingStakerIterator.Valid(); unbondingStakerIterator.Next() {
+		var val types.UnbondingStaker
+		k.cdc.MustUnmarshal(unbondingStakerIterator.Value(), &val)
+
+		response.ProtocolStakingUnbonding += val.UnbondingAmount
 	}
 
 	return &response, nil

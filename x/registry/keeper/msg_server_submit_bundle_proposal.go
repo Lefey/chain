@@ -227,7 +227,14 @@ func (k msgServer) SubmitBundleProposal(
 					slashedFunds += funder.Amount
 
 					// Emit a defund event.
-					types.EmitDefundPoolEvent(ctx, msg.Id, funder.Account, funder.Amount)
+					errEmit := ctx.EventManager().EmitTypedEvent(&types.EventDefundPool{
+						PoolId:  msg.Id,
+						Address: funder.Account,
+						Amount:  funder.Amount,
+					})
+					if errEmit != nil {
+						return nil, errEmit
+					}
 				}
 			}
 
@@ -265,7 +272,21 @@ func (k msgServer) SubmitBundleProposal(
 				k.SetPool(ctx, pool)
 
 				// Emit a bundle dropped event because of insufficient funds.
-				types.EmitBundleDroppedInsufficientFundsEvent(ctx, &pool)
+				errEmit := ctx.EventManager().EmitTypedEvent(&types.EventBundleFinalised{
+					PoolId:       pool.Id,
+					BundleId:     pool.BundleProposal.BundleId,
+					ByteSize:     pool.BundleProposal.ByteSize,
+					Uploader:     pool.BundleProposal.Uploader,
+					NextUploader: pool.BundleProposal.NextUploader,
+					Valid:        uint64(len(pool.BundleProposal.VotersValid)),
+					Invalid:      uint64(len(pool.BundleProposal.VotersInvalid)),
+					FromHeight:   pool.BundleProposal.FromHeight,
+					ToHeight:     pool.BundleProposal.ToHeight,
+					Status:       types.BUNDLE_STATUS_NO_FUNDS,
+				})
+				if errEmit != nil {
+					return nil, errEmit
+				}
 
 				return &types.MsgSubmitBundleProposalResponse{}, nil
 			}
@@ -305,7 +326,15 @@ func (k msgServer) SubmitBundleProposal(
 		// Partially slash all nodes who voted incorrectly.
 		for _, voter := range pool.BundleProposal.VotersInvalid {
 			slashAmount := k.slashStaker(ctx, &pool, voter, k.VoteSlash(ctx))
-			types.EmitSlashEvent(ctx, pool.Id, voter, slashAmount)
+
+			errEmit := ctx.EventManager().EmitTypedEvent(&types.EventSlash{
+				PoolId:  pool.Id,
+				Address: voter,
+				Amount:  slashAmount,
+			})
+			if errEmit != nil {
+				return nil, errEmit
+			}
 		}
 
 		// Send payout to treasury.
@@ -338,7 +367,22 @@ func (k msgServer) SubmitBundleProposal(
 		pool.CurrentValue = pool.BundleProposal.ToValue
 
 		// Emit a valid bundle event.
-		types.EmitBundleValidEvent(ctx, &pool, bundleReward)
+		errEmit := ctx.EventManager().EmitTypedEvent(&types.EventBundleFinalised{
+			PoolId:       pool.Id,
+			BundleId:     pool.BundleProposal.BundleId,
+			ByteSize:     pool.BundleProposal.ByteSize,
+			Uploader:     pool.BundleProposal.Uploader,
+			NextUploader: pool.BundleProposal.NextUploader,
+			Reward:       bundleReward,
+			Valid:        uint64(len(pool.BundleProposal.VotersValid)),
+			Invalid:      uint64(len(pool.BundleProposal.VotersInvalid)),
+			FromHeight:   pool.BundleProposal.FromHeight,
+			ToHeight:     pool.BundleProposal.ToHeight,
+			Status:       types.BUNDLE_STATUS_VALID,
+		})
+		if errEmit != nil {
+			return nil, errEmit
+		}
 
 		// Set submitted bundle as new bundle proposal and select new next_uploader
 		pool.BundleProposal = &types.BundleProposal{
@@ -359,20 +403,49 @@ func (k msgServer) SubmitBundleProposal(
 		// Partially slash all nodes who voted incorrectly.
 		for _, voter := range pool.BundleProposal.VotersValid {
 			slashAmount := k.slashStaker(ctx, &pool, voter, k.VoteSlash(ctx))
-			types.EmitSlashEvent(ctx, pool.Id, voter, slashAmount)
+
+			errEmit := ctx.EventManager().EmitTypedEvent(&types.EventSlash{
+				PoolId:  pool.Id,
+				Address: voter,
+				Amount:  slashAmount,
+			})
+			if errEmit != nil {
+				return nil, errEmit
+			}
 		}
 
 		// Partially slash the uploader.
 		slashAmount := k.slashStaker(ctx, &pool, pool.BundleProposal.Uploader, k.UploadSlash(ctx))
 
 		// emit slash event
-		types.EmitSlashEvent(ctx, pool.Id, pool.BundleProposal.Uploader, slashAmount)
+		errEmit := ctx.EventManager().EmitTypedEvent(&types.EventSlash{
+			PoolId:  pool.Id,
+			Address: pool.BundleProposal.Uploader,
+			Amount:  slashAmount,
+		})
+		if errEmit != nil {
+			return nil, errEmit
+		}
 
 		// Update the current lowest staker.
 		k.updateLowestStaker(ctx, &pool)
 
 		// Emit an invalid bundle event.
-		types.EmitBundleInvalidEvent(ctx, &pool)
+		errEmit = ctx.EventManager().EmitTypedEvent(&types.EventBundleFinalised{
+			PoolId:       pool.Id,
+			BundleId:     pool.BundleProposal.BundleId,
+			ByteSize:     pool.BundleProposal.ByteSize,
+			Uploader:     pool.BundleProposal.Uploader,
+			NextUploader: pool.BundleProposal.NextUploader,
+			Valid:        uint64(len(pool.BundleProposal.VotersValid)),
+			Invalid:      uint64(len(pool.BundleProposal.VotersInvalid)),
+			FromHeight:   pool.BundleProposal.FromHeight,
+			ToHeight:     pool.BundleProposal.ToHeight,
+			Status:       types.BUNDLE_STATUS_INVALID,
+		})
+		if errEmit != nil {
+			return nil, errEmit
+		}
 
 		// Update and return.
 		pool.BundleProposal = &types.BundleProposal{
