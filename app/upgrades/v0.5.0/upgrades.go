@@ -180,6 +180,8 @@ func CreateUpgradeHandler(
 
 		updateGovParams(ctx, govKeeper)
 
+		migratePools(registryKeeper, ctx)
+
 		// Return.
 		return vm, nil
 	}
