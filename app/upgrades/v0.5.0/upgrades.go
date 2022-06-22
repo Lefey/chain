@@ -61,7 +61,7 @@ func migrateIBCDenoms(ctx sdk.Context, transferKeeper *ibctransferkeeper.Keeper)
 }
 
 func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
-	registryKeeper.ParamStore().Set(ctx, types.KeyStorageCost, 50)
+	registryKeeper.ParamStore().Set(ctx, types.KeyStorageCost, uint64(50))
 
 	for _, pool := range registryKeeper.GetAllPool(ctx) {
 		// deprecate pool versions
