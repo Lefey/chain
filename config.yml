@@ -27,16 +27,39 @@ genesis:
         bond_denom: "tkyve"
     gov:
       voting_params:
-        # 2 minutes
-        voting_period: "120s"
-      deposit_params:
-        min_deposit: [
+        # 1 day
+        voting_period: "86400s"
+        proposal_voting_periods: [
           {
-            denom: "tkyve",
-            # 500 $KYVE
-            amount: "500000000000"
+            proposal_type: "kyve.registry.v1beta1.CreatePoolProposal",
+            # 2 hours
+            voting_period: "7200s"
+          },
+          {
+            proposal_type: "kyve.registry.v1beta1.PausePoolProposal",
+            # 5 minutes
+            voting_period: "300s"
           }
         ]
+        # 30 minutes
+        expedited_voting_period: "1800s"
+      deposit_params:
+          min_deposit: [
+            {
+              denom: "tkyve",
+              # 5_000 $KYVE
+              amount: "5_000_000_000_000"
+            }
+          ]
+          # 5 minutes
+          max_deposit_period: "300s"
+          min_expedited_deposit: [
+            {
+              denom: "tkyve",
+              # 25_000 $KYVE
+              amount: "25_000_000_000_000"
+            }
+          ]
     registry:
       pool_count: "1"
       pool_list: [
