@@ -70,7 +70,7 @@ func (k msgServer) SubmitBundleProposal(
 		return nil, types.ErrToHeight
 	}
 
-	if msg.ToHeight - current_height > pool.MaxBundleSize {
+	if msg.ToHeight-current_height > pool.MaxBundleSize {
 		return nil, types.ErrMaxBundleSize
 	}
 
@@ -138,8 +138,8 @@ func (k msgServer) SubmitBundleProposal(
 			ByteSize:     msg.ByteSize,
 			ToHeight:     msg.ToHeight,
 			CreatedAt:    uint64(ctx.BlockTime().Unix()),
-			ToKey: msg.ToKey,
-			ToValue: msg.ToValue,
+			ToKey:        msg.ToKey,
+			ToValue:      msg.ToValue,
 		}
 
 		k.SetPool(ctx, pool)
@@ -263,8 +263,8 @@ func (k msgServer) SubmitBundleProposal(
 					CreatedAt:     uint64(ctx.BlockTime().Unix()),
 					VotersValid:   pool.BundleProposal.VotersValid,
 					VotersInvalid: pool.BundleProposal.VotersInvalid,
-					ToKey: pool.BundleProposal.ToKey,
-					ToValue: pool.BundleProposal.ToValue,
+					ToKey:         pool.BundleProposal.ToKey,
+					ToValue:       pool.BundleProposal.ToValue,
 				}
 
 				k.SetPool(ctx, pool)
@@ -349,11 +349,15 @@ func (k msgServer) SubmitBundleProposal(
 
 		// save valid bundle
 		k.SetProposal(ctx, types.Proposal{
-			BundleId: pool.BundleProposal.BundleId,
-			PoolId: pool.Id,
-			Bundle: pool.TotalBundles,
-			ToKey: pool.BundleProposal.ToKey,
-			ToValue: pool.BundleProposal.ToValue,
+			BundleId:    pool.BundleProposal.BundleId,
+			PoolId:      pool.Id,
+			Bundle:      pool.TotalBundles,
+			Uploader:    pool.BundleProposal.Uploader,
+			FromHeight:  pool.CurrentHeight,
+			ToHeight:    pool.BundleProposal.ToHeight,
+			FinalizedAt: uint64(ctx.BlockHeight()),
+			ToKey:       pool.BundleProposal.ToKey,
+			ToValue:     pool.BundleProposal.ToValue,
 		})
 
 		// Finalise the proposal, saving useful information.
@@ -388,10 +392,10 @@ func (k msgServer) SubmitBundleProposal(
 			NextUploader: nextUploader,
 			BundleId:     msg.BundleId,
 			ByteSize:     msg.ByteSize,
-			ToHeight: msg.ToHeight,
+			ToHeight:     msg.ToHeight,
 			CreatedAt:    uint64(ctx.BlockTime().Unix()),
-			ToKey: msg.ToKey,
-			ToValue: msg.ToValue,
+			ToKey:        msg.ToKey,
+			ToValue:      msg.ToValue,
 		}
 
 		k.SetPool(ctx, pool)
