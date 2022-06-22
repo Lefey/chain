@@ -53,24 +53,46 @@ func (k msgServer) SubmitBundleProposal(
 		return nil, types.ErrInvalidArgs
 	}
 
+	// Get current height from where the bundle proposal should resume
+	current_height := pool.CurrentHeight
+
+	if pool.BundleProposal.ToHeight != 0 {
+		current_height = pool.BundleProposal.ToHeight
+	}
+
 	// Validate from height
-	if msg.FromHeight != pool.BundleProposal.ToHeight {
+	if msg.FromHeight != current_height {
 		return nil, types.ErrFromHeight
 	}
 
-	// Validate bundle size
-	if msg.BundleSize > pool.MaxBundleSize {
+	// Validate to height
+	if msg.ToHeight < current_height {
+		return nil, types.ErrToHeight
+	}
+
+	if msg.ToHeight - current_height > pool.MaxBundleSize {
 		return nil, types.ErrMaxBundleSize
 	}
 
-	// Check if upload_interval has been surpassed
-	if uint64(ctx.BlockTime().Unix()) < (pool.BundleProposal.CreatedAt + pool.UploadInterval) {
-		return nil, types.ErrUploadInterval
+	current_key := pool.CurrentKey
+
+	if pool.BundleProposal.ToKey != "" {
+		current_key = pool.BundleProposal.ToKey
+	}
+
+	// Validate from key
+	if msg.FromKey != current_key {
+		return nil, types.ErrFromKey
 	}
 
 	// Check if the sender is the designated uploader.
 	if pool.BundleProposal.NextUploader != msg.Creator {
 		return nil, types.ErrNotDesignatedUploader
+	}
+
+	// Check if upload_interval has been surpassed
+	if uint64(ctx.BlockTime().Unix()) < (pool.BundleProposal.CreatedAt + pool.UploadInterval) {
+		return nil, types.ErrUploadInterval
 	}
 
 	// EVALUATE PREVIOUS ROUND
@@ -88,12 +110,21 @@ func (k msgServer) SubmitBundleProposal(
 	// Check args of bundle types
 	if strings.HasPrefix(msg.BundleId, types.KYVE_NO_DATA_BUNDLE) {
 		// Validate bundle args
-		if msg.BundleSize != 0 || msg.ByteSize != 0 {
+		if msg.ToHeight != current_height || msg.ByteSize != 0 {
+			return nil, types.ErrInvalidArgs
+		}
+
+		// Validate key values
+		if msg.ToKey != "" || msg.ToValue != "" {
 			return nil, types.ErrInvalidArgs
 		}
 	} else {
-		// Validate bundle args
-		if msg.BundleSize == 0 || msg.ByteSize == 0 {
+		if msg.ToHeight <= current_height || msg.ByteSize == 0 {
+			return nil, types.ErrInvalidArgs
+		}
+
+		// Validate key values
+		if msg.ToKey == "" || msg.ToValue == "" {
 			return nil, types.ErrInvalidArgs
 		}
 	}
@@ -105,9 +136,10 @@ func (k msgServer) SubmitBundleProposal(
 			NextUploader: k.getNextUploaderByRandom(ctx, &pool, pool.Stakers),
 			BundleId:     msg.BundleId,
 			ByteSize:     msg.ByteSize,
-			FromHeight:   pool.BundleProposal.ToHeight,
-			ToHeight:     pool.BundleProposal.ToHeight + msg.BundleSize,
+			ToHeight:     msg.ToHeight,
 			CreatedAt:    uint64(ctx.BlockTime().Unix()),
+			ToKey: msg.ToKey,
+			ToValue: msg.ToValue,
 		}
 
 		k.SetPool(ctx, pool)
@@ -227,11 +259,12 @@ func (k msgServer) SubmitBundleProposal(
 					NextUploader:  pool.BundleProposal.NextUploader,
 					BundleId:      pool.BundleProposal.BundleId,
 					ByteSize:      pool.BundleProposal.ByteSize,
-					FromHeight:    pool.BundleProposal.FromHeight,
 					ToHeight:      pool.BundleProposal.ToHeight,
 					CreatedAt:     uint64(ctx.BlockTime().Unix()),
 					VotersValid:   pool.BundleProposal.VotersValid,
 					VotersInvalid: pool.BundleProposal.VotersInvalid,
+					ToKey: pool.BundleProposal.ToKey,
+					ToValue: pool.BundleProposal.ToValue,
 				}
 
 				k.SetPool(ctx, pool)
@@ -314,11 +347,22 @@ func (k msgServer) SubmitBundleProposal(
 			return nil, errTransfer
 		}
 
+		// save valid bundle
+		k.SetProposal(ctx, types.Proposal{
+			BundleId: pool.BundleProposal.BundleId,
+			PoolId: pool.Id,
+			Bundle: pool.TotalBundles,
+			ToKey: pool.BundleProposal.ToKey,
+			ToValue: pool.BundleProposal.ToValue,
+		})
+
 		// Finalise the proposal, saving useful information.
-		pool.HeightArchived = pool.BundleProposal.ToHeight
-		pool.BytesArchived = pool.BytesArchived + pool.BundleProposal.ByteSize
-		pool.TotalBundleRewards = pool.TotalBundleRewards + bundleReward
+		pool.CurrentHeight = pool.BundleProposal.ToHeight
+		pool.TotalBytes = pool.TotalBytes + pool.BundleProposal.ByteSize
 		pool.TotalBundles = pool.TotalBundles + 1
+		pool.TotalBundleRewards = pool.TotalBundleRewards + bundleReward
+		pool.CurrentKey = pool.BundleProposal.ToKey
+		pool.CurrentValue = pool.BundleProposal.ToValue
 
 		// Emit a valid bundle event.
 		errEmit := ctx.EventManager().EmitTypedEvent(&types.EventBundleFinalised{
@@ -344,9 +388,10 @@ func (k msgServer) SubmitBundleProposal(
 			NextUploader: nextUploader,
 			BundleId:     msg.BundleId,
 			ByteSize:     msg.ByteSize,
-			FromHeight:   pool.BundleProposal.ToHeight,
-			ToHeight:     pool.BundleProposal.ToHeight + msg.BundleSize,
+			ToHeight: msg.ToHeight,
 			CreatedAt:    uint64(ctx.BlockTime().Unix()),
+			ToKey: msg.ToKey,
+			ToValue: msg.ToValue,
 		}
 
 		k.SetPool(ctx, pool)
@@ -403,8 +448,6 @@ func (k msgServer) SubmitBundleProposal(
 		// Update and return.
 		pool.BundleProposal = &types.BundleProposal{
 			NextUploader: pool.BundleProposal.NextUploader,
-			FromHeight:   pool.BundleProposal.FromHeight,
-			ToHeight:     pool.BundleProposal.FromHeight,
 			CreatedAt:    uint64(ctx.BlockTime().Unix()),
 		}
 

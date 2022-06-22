@@ -111,8 +111,6 @@ func (k Keeper) HandleUploadTimeout(goCtx context.Context) {
 
 				pool.BundleProposal = &types.BundleProposal{
 					NextUploader: nextUploader,
-					FromHeight:   pool.BundleProposal.FromHeight,
-					ToHeight:     pool.BundleProposal.FromHeight,
 					CreatedAt:    uint64(ctx.BlockTime().Unix()),
 				}
 
