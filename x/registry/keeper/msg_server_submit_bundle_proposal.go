@@ -351,13 +351,13 @@ func (k msgServer) SubmitBundleProposal(
 		k.SetProposal(ctx, types.Proposal{
 			BundleId:    pool.BundleProposal.BundleId,
 			PoolId:      pool.Id,
-			Bundle:      pool.TotalBundles,
+			Id:      pool.TotalBundles,
 			Uploader:    pool.BundleProposal.Uploader,
 			FromHeight:  pool.CurrentHeight,
 			ToHeight:    pool.BundleProposal.ToHeight,
 			FinalizedAt: uint64(ctx.BlockHeight()),
-			ToKey:       pool.BundleProposal.ToKey,
-			ToValue:     pool.BundleProposal.ToValue,
+			Key:       pool.BundleProposal.ToKey,
+			Value:     pool.BundleProposal.ToValue,
 		})
 
 		// Finalise the proposal, saving useful information.

@@ -2,6 +2,9 @@ package v0_5_0
 
 import (
 	"fmt"
+	"strconv"
+	"time"
+
 	registrykeeper "github.com/KYVENetwork/chain/x/registry/keeper"
 	"github.com/KYVENetwork/chain/x/registry/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,8 +14,6 @@ import (
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
-	"strconv"
-	"time"
 )
 
 func createUnbondingParameters(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
@@ -135,6 +136,16 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 	}
 }
 
+func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
+	for _, proposal := range registryKeeper.GetAllProposal(ctx) {
+		// migrate bundle key
+		proposal.Key = strconv.FormatUint(proposal.ToHeight - 1, 10)
+
+		// save changes
+		registryKeeper.SetProposal(ctx, proposal)
+	}
+}
+
 func updateGovParams(ctx sdk.Context, govKeeper *govkeeper.Keeper) {
 	govKeeper.SetDepositParams(ctx, govtypes.DepositParams{
 		// 20,000 $KYVE
@@ -181,6 +192,8 @@ func CreateUpgradeHandler(
 		updateGovParams(ctx, govKeeper)
 
 		migratePools(registryKeeper, ctx)
+
+		migrateProposals(registryKeeper, ctx)
 
 		// Return.
 		return vm, nil
