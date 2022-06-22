@@ -2,15 +2,17 @@ package v0_5_0
 
 import (
 	"fmt"
-	"strconv"
-
 	registrykeeper "github.com/KYVENetwork/chain/x/registry/keeper"
 	"github.com/KYVENetwork/chain/x/registry/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 	ibctransferkeeper "github.com/cosmos/ibc-go/v3/modules/apps/transfer/keeper"
 	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
+	"strconv"
+	"time"
 )
 
 func createUnbondingParameters(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
@@ -133,7 +135,38 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 	}
 }
 
+func updateGovParams(ctx sdk.Context, govKeeper *govkeeper.Keeper) {
+	govKeeper.SetDepositParams(ctx, govtypes.DepositParams{
+		// 20,000 $KYVE
+		MinDeposit: sdk.NewCoins(sdk.NewInt64Coin("tkyve", 20_000_000_000_000)),
+		// 5 minutes
+		MaxDepositPeriod: time.Minute * 5,
+		// 100,000 $KYVE
+		MinExpeditedDeposit: sdk.NewCoins(sdk.NewInt64Coin("tkyve", 100_000_000_000_000)),
+	})
+
+	govKeeper.SetVotingParams(ctx, govtypes.VotingParams{
+		// 1 day
+		VotingPeriod: time.Hour * 24,
+		ProposalVotingPeriods: []govtypes.ProposalVotingPeriod{
+			{
+				ProposalType: "kyve.registry.v1beta1.CreatePoolProposal",
+				// 2 hours
+				VotingPeriod: time.Hour * 2,
+			},
+			{
+				ProposalType: "kyve.registry.v1beta1.PausePoolProposal",
+				// 5 minutes
+				VotingPeriod: time.Minute * 5,
+			},
+		},
+		// 30 minutes
+		ExpeditedVotingPeriod: time.Minute * 30,
+	})
+}
+
 func CreateUpgradeHandler(
+	govKeeper *govkeeper.Keeper,
 	registryKeeper *registrykeeper.Keeper,
 	transferKeeper *ibctransferkeeper.Keeper,
 ) upgradetypes.UpgradeHandler {
@@ -144,6 +177,8 @@ func CreateUpgradeHandler(
 		createProposalIndex(registryKeeper, ctx)
 
 		migrateIBCDenoms(ctx, transferKeeper)
+
+		updateGovParams(ctx, govKeeper)
 
 		// Return.
 		return vm, nil

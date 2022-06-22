@@ -603,5 +603,5 @@ func (app *App) setupUpgradeHandlers() {
 	app.UpgradeKeeper.SetUpgradeHandler(v0_1_0.UpgradeName, v0_1_0.CreateUpgradeHandler())
 	app.UpgradeKeeper.SetUpgradeHandler(v0_3_0.UpgradeName, v0_3_0.CreateUpgradeHandler(&app.RegistryKeeper))
 	app.UpgradeKeeper.SetUpgradeHandler(v0_4_0.UpgradeName, v0_4_0.CreateUpgradeHandler(&app.RegistryKeeper))
-	app.UpgradeKeeper.SetUpgradeHandler(v0_5_0.UpgradeName, v0_5_0.CreateUpgradeHandler(&app.RegistryKeeper, &app.TransferKeeper))
+	app.UpgradeKeeper.SetUpgradeHandler(v0_5_0.UpgradeName, v0_5_0.CreateUpgradeHandler(&app.GovKeeper, &app.RegistryKeeper, &app.TransferKeeper))
 }
