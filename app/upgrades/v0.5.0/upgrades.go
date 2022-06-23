@@ -161,7 +161,7 @@ func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 			lastProposal = proposal
 		}
 
-		pool.TotalBundles = id + 1
+		pool.TotalBundles = id
 
 		// drop current bundle
 		pool.BundleProposal = &types.BundleProposal{
