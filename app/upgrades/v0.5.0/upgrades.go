@@ -78,7 +78,7 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 		case "@kyve/evm":
 			pool.UpgradePlan = &types.UpgradePlan{
 				Version:  "1.2.0",
-				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989536562280796260/kyve-macos.zip?checksum=145825255b70855f8d5463fb395705fe9c4ad4d2d16480d3af8ba9360586c60d\"}",
+				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989552831025516594/kyve-macos.zip?checksum=13a02c291dbe70f559f8513394a27516c685b7567830f76c3bc5fd81b40abf7e\"}",
 			}
 		case "@kyve/stacks":
 			pool.UpgradePlan = &types.UpgradePlan{
