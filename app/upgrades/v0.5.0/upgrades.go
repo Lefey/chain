@@ -2,9 +2,10 @@ package v0_5_0
 
 import (
 	"fmt"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
 	"strconv"
 	"time"
+
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 
 	registrykeeper "github.com/KYVENetwork/chain/x/registry/keeper"
 	"github.com/KYVENetwork/chain/x/registry/types"
@@ -69,21 +70,15 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 		// deprecate pool versions
 		pool.Versions = ""
 
-		// deprecate pool from_height
-		pool.BundleProposal.FromHeight = 0
-
 		// set 2.5 $KYVE as operating cost
 		pool.OperatingCost = 2_500_000_000
-
-		// migrate height to custom keys
-		pool.StartKey = strconv.FormatUint(pool.CurrentHeight, 10)
 
 		// schedule upgrades for each runtime
 		switch pool.Runtime {
 		case "@kyve/evm":
 			pool.UpgradePlan = &types.UpgradePlan{
 				Version:  "1.2.0",
-				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989097802112041041/kyve-macos.zip?checksum=e2d99b4b6631e0f5350637bf51a5e3712a30f7aadedeb4f2975ebaa95880c861\"}",
+				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989536562280796260/kyve-macos.zip?checksum=145825255b70855f8d5463fb395705fe9c4ad4d2d16480d3af8ba9360586c60d\"}",
 			}
 		case "@kyve/stacks":
 			pool.UpgradePlan = &types.UpgradePlan{
@@ -149,6 +144,8 @@ func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 		defer iterator.Close()
 		id := uint64(0)
 
+		var lastProposal types.Proposal
+
 		for ; iterator.Valid(); iterator.Next() {
 			bundleId := string(iterator.Value())
 			proposal, _ := registryKeeper.GetProposal(ctx, bundleId)
@@ -161,8 +158,21 @@ func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 				fmt.Printf("%sPool %d : Proposals processed: %d\n", MigrationLoggerPrefix, pool.Id, id)
 			}
 
+			lastProposal = proposal
 		}
+
 		pool.TotalBundles = id + 1
+
+		// drop current bundle
+		pool.BundleProposal = &types.BundleProposal{
+			NextUploader: pool.BundleProposal.NextUploader,
+			CreatedAt: uint64(ctx.BlockHeight()),
+		}
+
+		// reset height
+		pool.CurrentHeight = lastProposal.ToHeight
+		// migrate height to custom keys
+		pool.StartKey = strconv.FormatUint(pool.CurrentHeight, 10)
 
 		registryKeeper.SetPool(ctx, pool)
 	}
