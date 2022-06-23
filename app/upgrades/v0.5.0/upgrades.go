@@ -2,6 +2,7 @@ package v0_5_0
 
 import (
 	"fmt"
+	"github.com/cosmos/cosmos-sdk/store/prefix"
 	"strconv"
 	"time"
 
@@ -137,13 +138,36 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 }
 
 func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
-	for _, proposal := range registryKeeper.GetAllProposal(ctx) {
-		// migrate bundle key
-		proposal.Key = strconv.FormatUint(proposal.ToHeight - 1, 10)
 
-		// save changes
-		registryKeeper.SetProposal(ctx, proposal)
+	fmt.Printf("%sMigration Proposals to new key system\n", MigrationLoggerPrefix)
+
+	for _, pool := range registryKeeper.GetAllPool(ctx) {
+		proposalPrefixBuilder := types.KeyPrefixBuilder{Key: types.ProposalKeyPrefixIndex3}.AInt(pool.Id)
+		store := prefix.NewStore(ctx.KVStore(registryKeeper.StoreKey()), proposalPrefixBuilder.Key)
+		iterator := sdk.KVStorePrefixIterator(store, []byte{})
+
+		defer iterator.Close()
+		id := uint64(0)
+
+		for ; iterator.Valid(); iterator.Next() {
+			bundleId := string(iterator.Value())
+			proposal, _ := registryKeeper.GetProposal(ctx, bundleId)
+			proposal.Id = id
+			id += 1
+			proposal.Key = strconv.FormatUint(proposal.ToHeight-1, 10)
+			registryKeeper.SetProposal(ctx, proposal)
+
+			if id%100 == 0 {
+				fmt.Printf("%sPool %d : Proposals processed: %d\n", MigrationLoggerPrefix, pool.Id, id)
+			}
+
+		}
+		pool.TotalBundles = id + 1
+
+		registryKeeper.SetPool(ctx, pool)
 	}
+
+	fmt.Printf("%sFinished proposal migration\n", MigrationLoggerPrefix)
 }
 
 func updateGovParams(ctx sdk.Context, govKeeper *govkeeper.Keeper) {
