@@ -166,7 +166,7 @@ func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 		// drop current bundle
 		pool.BundleProposal = &types.BundleProposal{
 			NextUploader: pool.BundleProposal.NextUploader,
-			CreatedAt: uint64(ctx.BlockHeight()),
+			CreatedAt:    uint64(ctx.BlockHeight()),
 		}
 
 		// reset height
@@ -188,6 +188,17 @@ func updateGovParams(ctx sdk.Context, govKeeper *govkeeper.Keeper) {
 		MaxDepositPeriod: time.Minute * 5,
 		// 100,000 $KYVE
 		MinExpeditedDeposit: sdk.NewCoins(sdk.NewInt64Coin("tkyve", 100_000_000_000_000)),
+	})
+
+	govKeeper.SetTallyParams(ctx, govtypes.TallyParams{
+		// 0.01 - 1%
+		Quorum: sdk.NewDec(1).Quo(sdk.NewDec(100)),
+		// 0.5 - 50%
+		Threshold: sdk.NewDecWithPrec(5, 1),
+		// 0.334 - 33.4%
+		VetoThreshold: sdk.NewDecWithPrec(334, 3),
+		// 0.667 - 66.7%
+		ExpeditedThreshold: sdk.NewDecWithPrec(667, 3),
 	})
 
 	govKeeper.SetVotingParams(ctx, govtypes.VotingParams{
