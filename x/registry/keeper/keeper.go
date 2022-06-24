@@ -77,7 +77,7 @@ func (k Keeper) IterateProtocolBonding(ctx sdk.Context, address sdk.AccAddress, 
 		delegatorStore := prefix.NewStore(ctx.KVStore(k.storeKey), delegatorPrefix)
 		delegatorIterator := sdk.KVStorePrefixIterator(delegatorStore, nil)
 
-		defer delegatorIterator.Close()
+		delegatorIterator.Close()
 
 		for ; delegatorIterator.Valid(); delegatorIterator.Next() {
 			key := delegatorIterator.Key()
