@@ -19,10 +19,10 @@ import (
 )
 
 func createUnbondingParameters(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
-	// init param
+	// init param // TODO: change to 5 days
 	registryKeeper.ParamStore().Set(ctx, types.KeyUnbondingStakingTime, types.DefaultUnbondingStakingTime)
 
-	// init param
+	// init param // TODO: change to 5 days
 	registryKeeper.ParamStore().Set(ctx, types.KeyUnbondingDelegationTime, types.DefaultUnbondingDelegationTime)
 }
 
@@ -78,7 +78,7 @@ func migratePools(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 		case "@kyve/evm":
 			pool.UpgradePlan = &types.UpgradePlan{
 				Version:  "1.2.0",
-				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989536562280796260/kyve-macos.zip?checksum=145825255b70855f8d5463fb395705fe9c4ad4d2d16480d3af8ba9360586c60d\"}",
+				Binaries: "{\"macos\":\"https://cdn.discordapp.com/attachments/889827445132374036/989552831025516594/kyve-macos.zip?checksum=13a02c291dbe70f559f8513394a27516c685b7567830f76c3bc5fd81b40abf7e\"}",
 			}
 		case "@kyve/stacks":
 			pool.UpgradePlan = &types.UpgradePlan{
@@ -161,7 +161,7 @@ func migrateProposals(registryKeeper *registrykeeper.Keeper, ctx sdk.Context) {
 			lastProposal = proposal
 		}
 
-		pool.TotalBundles = id + 1
+		pool.TotalBundles = id
 
 		// drop current bundle
 		pool.BundleProposal = &types.BundleProposal{
@@ -202,22 +202,17 @@ func updateGovParams(ctx sdk.Context, govKeeper *govkeeper.Keeper) {
 	})
 
 	govKeeper.SetVotingParams(ctx, govtypes.VotingParams{
-		// 1 day
-		VotingPeriod: time.Hour * 24,
+		// TODO: change to 1 day
+		VotingPeriod: time.Minute * 20,
 		ProposalVotingPeriods: []govtypes.ProposalVotingPeriod{
 			{
 				ProposalType: "kyve.registry.v1beta1.CreatePoolProposal",
-				// 2 hours
-				VotingPeriod: time.Hour * 2,
-			},
-			{
-				ProposalType: "kyve.registry.v1beta1.PausePoolProposal",
-				// 5 minutes
-				VotingPeriod: time.Minute * 5,
+				// TODO: change to 2 hours
+				VotingPeriod: time.Minute * 10,
 			},
 		},
-		// 30 minutes
-		ExpeditedVotingPeriod: time.Minute * 30,
+		// TODO: change to 30 min
+		ExpeditedVotingPeriod: time.Minute * 5,
 	})
 }
 
